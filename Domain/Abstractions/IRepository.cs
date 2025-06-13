@@ -12,8 +12,8 @@ public interface IRepository<TEntity> where TEntity : Entity
         CancellationToken cancellationToken = default);
 
     // Remove
-    Task<bool> RemoveByIdAsync(
-        Guid id,
+    Task<int> RemoveAsync(
+        IFilter<TEntity> filter,
         CancellationToken cancellationToken = default);
 
     // Update
@@ -21,7 +21,7 @@ public interface IRepository<TEntity> where TEntity : Entity
 
     // Exists
     Task<bool> ExistsAsync(
-        Guid id,
+        IFilter<TEntity> filter,
         CancellationToken cancellationToken = default);
 
     // Get
