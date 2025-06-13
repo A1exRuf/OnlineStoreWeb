@@ -17,6 +17,15 @@ internal class CategoryConfiguration : IEntityTypeConfiguration<Category>
         builder.Property(x =>  x.Name).IsRequired();
         builder.Property(x => x.ParentCategoryId);
 
+        // Relations
+        builder.HasOne(c => c.ParentCategory)
+            .WithMany()
+            .HasForeignKey(c => c.ParentCategoryId)
+            .OnDelete(DeleteBehavior.Restrict);
+        builder.HasMany(c => c.Products)
+            .WithOne(p => p.Category)
+            .HasForeignKey(p => p.CategoryId);
+
         // Indexes
         builder.HasIndex(x => x.ParentCategoryId);
     }

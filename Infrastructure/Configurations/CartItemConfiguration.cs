@@ -16,7 +16,17 @@ namespace Infrastructure.Configurations
             // Properties
             builder.Property(x => x.CartId).IsRequired();
             builder.Property(x => x.ProductId).IsRequired();
-            builder.Property(x => x.Quantity).IsRequired().HasAnnotation("MinValue", 1);
+            builder.Property(x => x.Quantity).IsRequired();
+
+            // Relations
+            builder.HasOne(ci => ci.Cart)
+                .WithMany(c => c.Items)
+                .HasForeignKey(ci => ci.CartId)
+                .OnDelete(DeleteBehavior.Cascade);
+            builder.HasOne(ci => ci.Product)
+                .WithMany()
+                .HasForeignKey(ci => ci.ProductId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             // Indexes
             builder.HasIndex(x => x.CartId);
