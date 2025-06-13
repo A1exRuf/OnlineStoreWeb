@@ -16,7 +16,13 @@ internal class CartConfiguration : IEntityTypeConfiguration<Cart>
         // Properties
         builder.Property(x => x.UserId).IsRequired();
 
+        // Relations
+        builder.HasOne(c => c.User)
+            .WithOne(u => u.Cart)
+            .HasForeignKey<Cart>(c => c.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+
         // Indexes
-        builder.HasIndex(x => x.UserId);
+        builder.HasIndex(x => x.UserId).IsUnique();
     }
 }
