@@ -8,16 +8,17 @@ namespace Infrastructure.Configurations
     {
         public void Configure(EntityTypeBuilder<OrderItem> builder)
         {
+            // Table
             builder.ToTable("OrderItems");
 
             // Key
-            builder.HasKey(x => x.Id);
+            builder.HasKey(oi => oi.Id);
 
             // Properties
-            builder.Property(x => x.OrderId).IsRequired();
-            builder.Property(x => x.ProductId).IsRequired();
-            builder.Property(x => x.Quantity).IsRequired().HasAnnotation("MinValue", 1);
-            builder.Property(x => x.UnitPrice).IsRequired();
+            builder.Property(oi => oi.OrderId).IsRequired();
+            builder.Property(oi => oi.ProductId).IsRequired();
+            builder.Property(oi => oi.Quantity).IsRequired().HasAnnotation("MinValue", 1);
+            builder.Property(oi => oi.UnitPrice).IsRequired();
 
             // Relations
             builder.HasOne(oi => oi.Order)
@@ -30,7 +31,7 @@ namespace Infrastructure.Configurations
                 .OnDelete(DeleteBehavior.Restrict);
 
             // Indexes
-            builder.HasIndex(x => x.OrderId);
+            builder.HasIndex(oi => oi.OrderId);
         }
     }
 }

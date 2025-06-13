@@ -8,6 +8,7 @@ internal class ProductConfiguration : IEntityTypeConfiguration<Product>
 {
     public void Configure(EntityTypeBuilder<Product> builder)
     {
+        // Table
         builder.ToTable("Products");
 
         // Key

@@ -8,6 +8,7 @@ internal class ProductImageConfiguration : IEntityTypeConfiguration<ProductImage
 {
     public void Configure(EntityTypeBuilder<ProductImage> builder)
     {
+        // Table
         builder.ToTable("ProductImages");
 
         // Key

@@ -8,14 +8,15 @@ internal class CategoryConfiguration : IEntityTypeConfiguration<Category>
 {
     public void Configure(EntityTypeBuilder<Category> builder)
     {
+        // Table
         builder.ToTable("Categories");
 
         // Key
-        builder.HasKey(x => x.Id);
+        builder.HasKey(c => c.Id);
 
         // Properties
-        builder.Property(x =>  x.Name).IsRequired();
-        builder.Property(x => x.ParentCategoryId);
+        builder.Property(c =>  c.Name).IsRequired();
+        builder.Property(c => c.ParentCategoryId);
 
         // Relations
         builder.HasOne(c => c.ParentCategory)
@@ -27,6 +28,6 @@ internal class CategoryConfiguration : IEntityTypeConfiguration<Category>
             .HasForeignKey(p => p.CategoryId);
 
         // Indexes
-        builder.HasIndex(x => x.ParentCategoryId);
+        builder.HasIndex(c => c.ParentCategoryId);
     }
 }

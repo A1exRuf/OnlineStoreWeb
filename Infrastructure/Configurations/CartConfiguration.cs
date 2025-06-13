@@ -8,13 +8,14 @@ internal class CartConfiguration : IEntityTypeConfiguration<Cart>
 {
     public void Configure(EntityTypeBuilder<Cart> builder)
     {
+        // Table
         builder.ToTable("Carts");
 
         // Key
-        builder.HasKey(x => x.Id);
+        builder.HasKey(c => c.Id);
 
         // Properties
-        builder.Property(x => x.UserId).IsRequired();
+        builder.Property(c => c.UserId).IsRequired();
 
         // Relations
         builder.HasOne(c => c.User)
@@ -23,6 +24,6 @@ internal class CartConfiguration : IEntityTypeConfiguration<Cart>
             .OnDelete(DeleteBehavior.Cascade);
 
         // Indexes
-        builder.HasIndex(x => x.UserId).IsUnique();
+        builder.HasIndex(c => c.UserId).IsUnique();
     }
 }

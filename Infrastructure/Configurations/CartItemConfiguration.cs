@@ -8,15 +8,16 @@ namespace Infrastructure.Configurations
     {
         public void Configure(EntityTypeBuilder<CartItem> builder)
         {
+            // Table
             builder.ToTable("CartItems");
 
             // Key
-            builder.HasKey(x => x.Id);
+            builder.HasKey(ci => ci.Id);
 
             // Properties
-            builder.Property(x => x.CartId).IsRequired();
-            builder.Property(x => x.ProductId).IsRequired();
-            builder.Property(x => x.Quantity).IsRequired();
+            builder.Property(ci => ci.CartId).IsRequired();
+            builder.Property(ci => ci.ProductId).IsRequired();
+            builder.Property(ci => ci.Quantity).IsRequired();
 
             // Relations
             builder.HasOne(ci => ci.Cart)
@@ -29,7 +30,7 @@ namespace Infrastructure.Configurations
                 .OnDelete(DeleteBehavior.Cascade);
 
             // Indexes
-            builder.HasIndex(x => x.CartId);
+            builder.HasIndex(ci => ci.CartId);
         }
     }
 }

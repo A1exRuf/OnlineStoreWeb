@@ -8,6 +8,7 @@ namespace Infrastructure.Configurations
     {
         public void Configure(EntityTypeBuilder<PromoCode> builder)
         {
+            // Table
             builder.ToTable("PromoCodes");
 
             // Key
