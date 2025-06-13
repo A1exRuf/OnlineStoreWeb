@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.12.35527.113 d17.12
+VisualStudioVersion = 17.12.35527.113
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineStoreWeb", "OnlineStoreWeb\OnlineStoreWeb.csproj", "{6733B337-71BD-46C4-90AF-324CCC93B5CE}"
 EndProject
@@ -16,6 +16,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure", "Infrastructure\Infrastructure.csproj", "{4A778EC5-F099-4A3C-BB68-DB31FFA97498}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Presentation", "Presentation\Presentation.csproj", "{DEADC92B-A0EB-4258-A47D-E3EAB21A336C}"
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{32D6DE7C-A63A-4E6C-A9C5-3C58AD541D2B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -43,6 +45,10 @@ Global
 		{DEADC92B-A0EB-4258-A47D-E3EAB21A336C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DEADC92B-A0EB-4258-A47D-E3EAB21A336C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DEADC92B-A0EB-4258-A47D-E3EAB21A336C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{32D6DE7C-A63A-4E6C-A9C5-3C58AD541D2B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{32D6DE7C-A63A-4E6C-A9C5-3C58AD541D2B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{32D6DE7C-A63A-4E6C-A9C5-3C58AD541D2B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{32D6DE7C-A63A-4E6C-A9C5-3C58AD541D2B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
