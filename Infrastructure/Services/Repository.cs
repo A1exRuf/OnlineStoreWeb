@@ -1,6 +1,7 @@
 ﻿using Domain.Abstractions;
 using Domain.Common;
 using Domain.Entities;
+using Infrastructure.Extensions;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
@@ -16,13 +17,12 @@ public class Repository<TEntity> : IRepository<TEntity> where TEntity : Entity
         _context = context;
     }
 
-    // Methods
     // Add
     public async Task AddAsync(
         TEntity entity, 
         CancellationToken cancellationToken = default)
     {
-        await _context.Set<TEntity>().AddAsync(entity, cancellationToken);
+        await DbSet.AddAsync(entity, cancellationToken);
     }
 
     // Remove
@@ -30,20 +30,15 @@ public class Repository<TEntity> : IRepository<TEntity> where TEntity : Entity
         IFilter<TEntity> filter,
         CancellationToken cancellationToken = default)
     {
-        // Build filtered query for deletion
-        var query = _context.Set<TEntity>().AsQueryable();
-        query = filter.ApplyFilter(query);
-
-        // Execute deletion and return number of affected rows
-        var quantity = await query.ExecuteDeleteAsync(cancellationToken);
-
-        return quantity;
+        return await DbSet
+            .ApplyFilter(filter)
+            .ExecuteDeleteAsync(cancellationToken);
     }
 
     // Update
     public void Update(TEntity entity)
     {
-        _context.Set<TEntity>().Update(entity);
+        DbSet.Update(entity);
     }
 
     // Exists
@@ -51,10 +46,9 @@ public class Repository<TEntity> : IRepository<TEntity> where TEntity : Entity
         IFilter<TEntity> filter,
         CancellationToken cancellationToken = default)
     {
-        var query = _context.Set<TEntity>().AsQueryable();
-        query = ApplyFilter(filter, query);
-
-        return await query.AnyAsync(cancellationToken);
+        return await DbSet
+            .ApplyFilter(filter)
+            .AnyAsync(cancellationToken);
     }
 
     // Get
@@ -63,11 +57,10 @@ public class Repository<TEntity> : IRepository<TEntity> where TEntity : Entity
         bool asNoTracking = true, 
         CancellationToken cancellationToken = default)
     {
-        var query = _context.Set<TEntity>().AsQueryable();
-        query = ApplyAsNoTracking(asNoTracking, query);
-        query = ApplyFilter(filter, query);
-
-        return await query.FirstOrDefaultAsync(cancellationToken);
+        return await DbSet
+            .ApplyAsNoTracking(asNoTracking)
+            .ApplyFilter(filter)
+            .FirstOrDefaultAsync(cancellationToken);
     }
 
     public async Task<TDto?> GetAsync<TDto>(
@@ -75,25 +68,27 @@ public class Repository<TEntity> : IRepository<TEntity> where TEntity : Entity
         bool asNoTracking = true, 
         CancellationToken cancellationToken = default)
     {
-        var query = _context.Set<TEntity>().AsQueryable();
-        query = ApplyAsNoTracking(asNoTracking, query);
-        query = ApplyFilter(filter, query);
-
-        return await query.ProjectToType<TDto>().FirstOrDefaultAsync(cancellationToken);
+        return await DbSet
+            .ApplyAsNoTracking(asNoTracking)
+            .ApplyFilter(filter)
+            .ProjectToType<TDto>()
+            .FirstOrDefaultAsync(cancellationToken);
     }
 
     // Get List
     public async Task<List<TDto>> GetListAsync<TDto, TKey>(
         IFilter<TEntity> filter, 
         bool asNoTracking = true, 
-        Expression<Func<TEntity, TKey>>? orderBy = null, bool descending = false, CancellationToken cancellationToken = default)
+        Expression<Func<TEntity, TKey>>? orderBy = null, 
+        bool descending = false, 
+        CancellationToken cancellationToken = default)
     {
-        var query = _context.Set<TEntity>().AsQueryable();
-        query = ApplyAsNoTracking(asNoTracking, query);
-        query = ApplyFilter(filter, query);
-        query = SortQuery(orderBy, descending, query);
-
-        return await query.ProjectToType<TDto>().ToListAsync(cancellationToken);
+        return await DbSet
+            .ApplyAsNoTracking(asNoTracking)
+            .ApplyFilter(filter)
+            .SortQuery(orderBy, descending)
+            .ProjectToType<TDto>()
+            .ToListAsync(cancellationToken);
     }
 
     // Get Paged List
@@ -106,10 +101,10 @@ public class Repository<TEntity> : IRepository<TEntity> where TEntity : Entity
         bool descending = false, 
         CancellationToken cancellationToken = default)
     {
-        var query = _context.Set<TEntity>().AsQueryable();
-        query = ApplyAsNoTracking(asNoTracking, query);
-        query = ApplyFilter(filter, query);
-        query = SortQuery(orderBy, descending, query);
+        var query = DbSet
+            .ApplyAsNoTracking(asNoTracking)
+            .ApplyFilter(filter)
+            .SortQuery(orderBy, descending);
 
         int totalCount = await query.CountAsync(cancellationToken);
 
@@ -122,38 +117,6 @@ public class Repository<TEntity> : IRepository<TEntity> where TEntity : Entity
         return new PagedList<TDto>(items, page, pageSize, totalCount);
     }
 
-
-    // Helper methods
-    private static IQueryable<TEntity> ApplyAsNoTracking(bool asNoTracking, IQueryable<TEntity> query)
-    {
-        if (asNoTracking)
-        {
-            query = query.AsNoTracking();
-        }
-
-        return query;
-    }
-
-    private static IQueryable<TEntity> ApplyFilter(IFilter<TEntity> filter, IQueryable<TEntity> query)
-    {
-        query = filter.ApplyFilter(query);
-        return query;
-    }
-
-    private IQueryable<TEntity> SortQuery<TSort>(Expression<Func<TEntity, TSort>>? orderBy, bool descending, IQueryable<TEntity> query)
-    {
-        if (orderBy != null)
-        {
-            if (descending)
-                query = query.OrderByDescending(orderBy);
-            else
-                query = query.OrderBy(orderBy);
-        }
-        else
-        {
-            query = query.OrderBy(x => x.Id);
-        }
-
-        return query;
-    }
+    // Helper method
+    private DbSet<TEntity> DbSet => _context.Set<TEntity>();
 }
