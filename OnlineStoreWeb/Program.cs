@@ -1,4 +1,5 @@
 using OnlineStoreWeb.Configuration;
+using OnlineStoreWeb.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -7,6 +8,8 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddApplicationDbContextConfig(builder.Configuration);
 
 var app = builder.Build();
+
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 if (app.Environment.IsDevelopment())
 {
