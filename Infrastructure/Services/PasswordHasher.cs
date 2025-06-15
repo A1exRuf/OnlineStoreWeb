@@ -1,5 +1,5 @@
 ﻿using System.Security.Cryptography;
-using Domain.Abstractions;
+using Application.Abstractions;
 
 namespace Infrastructure.Services;
 

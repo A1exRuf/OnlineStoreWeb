@@ -13,6 +13,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<Product> Product { get; set; }
     public DbSet<ProductImage> ProductImage { get; set; }
     public DbSet<PromoCode> PromoCode { get; set; }
+    public DbSet<RefreshToken> RefreshToken { get; set; }
     public DbSet<User> User { get; set; }
 
     public ApplicationDbContext(DbContextOptions options) : base(options) { }
