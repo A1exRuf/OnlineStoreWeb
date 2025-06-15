@@ -2,10 +2,14 @@
 
 namespace Application.Abstractions.Messaging;
 
-public interface ICommand : IRequest
+public interface IBaseCommand
 {
 }
 
-public interface ICommand<TResponse> : IRequest<TResponse>
+public interface ICommand : IBaseCommand, IRequest
+{
+}
+
+public interface ICommand<TResponse> : IBaseCommand, IRequest<TResponse>
 {
 }
