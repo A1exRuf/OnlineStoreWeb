@@ -1,4 +1,7 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Application.Behaviors;
+using FluentValidation;
+using MediatR;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Application
 {
@@ -10,6 +13,9 @@ namespace Application
             {
                 config.RegisterServicesFromAssembly(AssemblyReference.Assembly);
             });
+            services.AddValidatorsFromAssembly(AssemblyReference.Assembly);
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+
             return services;
         }
     }
