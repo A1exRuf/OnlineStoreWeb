@@ -1,4 +1,5 @@
-﻿using Domain.Exceptions.Base;
+﻿using Application.Exceptions;
+using Domain.Exceptions.Base;
 using System.Text.Json;
 
 namespace OnlineStoreWeb.Middleware;
@@ -31,10 +32,21 @@ internal class ExceptionHandlingMiddleware : IMiddleware
         httpContext.Response.ContentType = "application/json";
         httpContext.Response.StatusCode = exception switch
         {
-            BadRequestException => StatusCodes.Status400BadRequest,
+            BadRequestException or ValidationException => StatusCodes.Status400BadRequest,
             NotFoundException => StatusCodes.Status404NotFound,
             _ => StatusCodes.Status500InternalServerError
         };
+
+        var errors = Array.Empty<ApiError>();
+
+        if (exception is ValidationException validationException)
+        {
+           errors = validationException.Errors
+                .SelectMany(
+               kvp => kvp.Value,
+               (kvp, value) => new ApiError(kvp.Key, value))
+                .ToArray();
+        }
 
         var response = new
         {
@@ -44,4 +56,6 @@ internal class ExceptionHandlingMiddleware : IMiddleware
 
         await httpContext.Response.WriteAsync(JsonSerializer.Serialize(response));
     }
+
+    private record ApiError(string PropertyName, string ErrorMessage);
 }
