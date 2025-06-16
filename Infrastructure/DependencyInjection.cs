@@ -1,4 +1,5 @@
 ﻿using Application.Abstractions;
+using Domain.Abstractions;
 using Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -13,6 +14,8 @@ namespace Infrastructure
             services.AddDbContext<ApplicationDbContext>(builder => 
             builder.UseNpgsql(configuration.GetConnectionString("Database")));
 
+            services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IPasswordHasher, PasswordHasher>();
             services.AddScoped<ITokenProvider, TokenProvider>();
 
