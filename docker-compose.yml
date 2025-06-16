@@ -1,0 +1,6 @@
+services:
+  onlinestoreweb:
+    image: ${DOCKER_REGISTRY-}onlinestoreweb
+    build:
+      context: .
+      dockerfile: OnlineStoreWeb/Dockerfile
