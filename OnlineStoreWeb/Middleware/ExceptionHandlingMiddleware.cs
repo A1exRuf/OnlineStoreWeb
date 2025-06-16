@@ -52,6 +52,7 @@ internal class ExceptionHandlingMiddleware : IMiddleware
         {
             status = httpContext.Response.StatusCode,
             message = exception.Message,
+            errors
         };
 
         await httpContext.Response.WriteAsync(JsonSerializer.Serialize(response));
