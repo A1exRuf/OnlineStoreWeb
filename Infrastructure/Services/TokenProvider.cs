@@ -1,8 +1,8 @@
 ﻿using Application.Abstractions;
 using Domain.Entities;
 using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
@@ -32,11 +32,11 @@ public class TokenProvider(IConfiguration configuration) : ITokenProvider
             Audience = configuration["Jwt:Audience"]
         };
 
-        var handler = new JsonWebTokenHandler();
+        var handler = new JwtSecurityTokenHandler();
 
-        string token = handler.CreateToken(tokenDescriptor);
+        var token = handler.CreateToken(tokenDescriptor);
 
-        return token;
+        return handler.WriteToken(token);
     }
 
     public string GenerateRefreshToken()

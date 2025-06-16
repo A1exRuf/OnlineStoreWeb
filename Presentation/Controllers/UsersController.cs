@@ -1,4 +1,5 @@
-﻿using Application.UseCases.Users.Commands.Register;
+﻿using Application.UseCases.Users.Commands.Login;
+using Application.UseCases.Users.Commands.Register;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,6 +19,16 @@ public class UsersController : ApiController
         var result = await Sender.Send(command);
 
         return Created(string.Empty, result);
+    }
+
+    [HttpPost("Login")]
+    public async Task<IActionResult> Login(
+        [FromBody] LoginCommand command,
+        CancellationToken cancellationToken)
+    {
+        var result = await Sender.Send(command);
+
+        return Ok(result);
     }
 }
 

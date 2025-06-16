@@ -23,8 +23,10 @@ public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TReques
 
         var context = new ValidationContext<TRequest>(request);
 
-        var errorsDictionary = _validators
-            .Select(x => x.Validate(context))
+        var validationResults = await Task.WhenAll(
+        _validators.Select(v => v.ValidateAsync(context, cancellationToken)));
+
+        var errorsDictionary = validationResults
             .SelectMany(x => x.Errors)
             .Where(x => x != null)
             .GroupBy(
