@@ -22,3 +22,10 @@ services:
       - ./.containers/database:/var/lib/postgresql/data
     ports:
       - 5432:5432
+
+  papercut:
+    image: changemakerstudiosus/papercut-smtp:latest
+    container_name: papercut
+    ports:
+      - 8082:80
+      - 25:25

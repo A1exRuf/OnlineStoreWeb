@@ -43,4 +43,19 @@ public class TokenProvider(IConfiguration configuration) : ITokenProvider
     {
         return Convert.ToBase64String(RandomNumberGenerator.GetBytes(32));
     }
+
+    public string GenerateResetToken()
+    {
+        int length = 6;
+        var token = new char[length];
+        using var rng = RandomNumberGenerator.Create();
+        var bytes = new byte[length];
+
+        rng.GetBytes(bytes);
+
+        for (int i = 0; i < length; i++)
+            token[i] = (char)('0' + (bytes[i] % 10));
+
+        return new string(token);
+    }
 }

@@ -1,5 +1,6 @@
 ﻿using Application.UseCases.Users.Commands.Login;
 using Application.UseCases.Users.Commands.Register;
+using Application.UseCases.Users.Commands.RequestResetPassword;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,7 +12,7 @@ public class UsersController : ApiController
     {
     }
 
-    [HttpPost("Register")]
+    [HttpPost("register")]
     public async Task<IActionResult> Register(
         [FromBody] RegisterCommand command,
         CancellationToken cancellationToken)
@@ -21,7 +22,7 @@ public class UsersController : ApiController
         return Created(string.Empty, result);
     }
 
-    [HttpPost("Login")]
+    [HttpPost("login")]
     public async Task<IActionResult> Login(
         [FromBody] LoginCommand command,
         CancellationToken cancellationToken)
@@ -29,6 +30,16 @@ public class UsersController : ApiController
         var result = await Sender.Send(command);
 
         return Ok(result);
+    }
+
+    [HttpPost("password-reset")]
+    public async Task<IActionResult> RequestResetPassword(
+        [FromBody] RequestResetPasswordCommand command,
+        CancellationToken cancellationToken)
+    {
+        await Sender.Send(command);
+
+        return Ok();
     }
 }
 
