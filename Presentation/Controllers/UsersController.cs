@@ -1,4 +1,5 @@
 ﻿using Application.UseCases.Users.Commands.Login;
+using Application.UseCases.Users.Commands.LoginWithRefreshToken;
 using Application.UseCases.Users.Commands.Register;
 using Application.UseCases.Users.Commands.RequestResetPassword;
 using Application.UseCases.Users.Commands.ResetPassword;
@@ -33,6 +34,16 @@ public class UsersController : ApiController
         return Ok(result);
     }
 
+    [HttpPost("login-with-refresh-token")]
+    public async Task<IActionResult> LoginWithRefreshToken(
+        [FromBody] LoginWithRefreshTokenCommand command,
+        CancellationToken cancellationToken)
+    {
+        var result = await Sender.Send(command);
+
+        return Ok(result);
+    }
+
     [HttpPost("password-reset")]
     public async Task<IActionResult> RequestResetPassword(
         [FromBody] RequestResetPasswordCommand command,
@@ -42,6 +53,7 @@ public class UsersController : ApiController
 
         return Ok();
     }
+
     [HttpPost("password-reset/confirm")]
     public async Task<IActionResult> ResetPassword(
         [FromBody] ResetPasswordCommand command,
@@ -52,4 +64,3 @@ public class UsersController : ApiController
         return Ok();
     }
 }
-

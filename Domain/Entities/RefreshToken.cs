@@ -16,4 +16,11 @@ public class RefreshToken : Entity
         UserId = userId;
     }
 
+    private RefreshToken() { }
+
+    public void UpdateToken(string token)
+    {
+        Token = token;
+        ExpiresOnUtc = DateTime.UtcNow.AddDays(7);
+    }
 }

@@ -15,6 +15,22 @@ public static class QueryableExtensions
         return asNoTracking ? query.AsNoTracking() : query;
     }
 
+    public static IQueryable<TEntity> ApplyIncludes<TEntity>(
+        this IQueryable<TEntity> query,
+        params Expression<Func<TEntity, object>>[] includes)
+        where TEntity : Entity
+    {
+        if (includes == null || !includes.Any())
+            return query;
+
+        foreach (var include in includes)
+        {
+            query = query.Include(include);
+        }
+
+        return query;
+    }
+
     public static IQueryable<TEntity> ApplyFilter<TEntity>(
         this IQueryable<TEntity> query,
         IFilter<TEntity> filter)
