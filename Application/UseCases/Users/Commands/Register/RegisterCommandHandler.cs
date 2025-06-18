@@ -9,15 +9,18 @@ namespace Application.UseCases.Users.Commands.Register;
 public class RegisterCommandHandler : ICommandHandler<RegisterCommand, Guid>
 {
     private readonly IRepository<User> _userRepository;
+    private readonly IRepository<Cart> _cartRepository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IPasswordHasher _passwordHasher;
 
     public RegisterCommandHandler(
         IRepository<User> userRepository, 
+        IRepository<Cart> cartRepository, 
         IUnitOfWork unitOfWork, 
         IPasswordHasher passwordHasher)
     {
         _userRepository = userRepository;
+        _cartRepository = cartRepository;
         _unitOfWork = unitOfWork;
         _passwordHasher = passwordHasher;
     }
@@ -33,6 +36,12 @@ public class RegisterCommandHandler : ICommandHandler<RegisterCommand, Guid>
             Enum.Parse<UserRole>(request.Role, true));
 
         await _userRepository.AddAsync(user, cancellationToken);
+
+        var cart = new Cart(
+            Guid.NewGuid(),
+            user.Id);
+
+        await _cartRepository.AddAsync(cart, cancellationToken);
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
