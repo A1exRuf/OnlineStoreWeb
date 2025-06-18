@@ -1,7 +1,7 @@
-using OnlineStoreWeb.Middleware;
 using Application;
 using Infrastructure;
 using OnlineStoreWeb.Extensions;
+using OnlineStoreWeb.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,10 +9,9 @@ builder.Services.AddControllers();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSwaggerJwt();
 builder.Services.AddJwtAuthentication(builder.Configuration);
-builder.Services.AddApplication();
+builder.Services.AddApplication(builder.Configuration);
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddTransient<ExceptionHandlingMiddleware>();
-
 
 var app = builder.Build();
 
