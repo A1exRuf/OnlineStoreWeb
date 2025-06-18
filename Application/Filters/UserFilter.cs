@@ -5,14 +5,14 @@ namespace Application.Filters
 {
     public class UserFilter : IFilter<User>
     {
-        public Guid? Guid { get; set; }
+        public Guid? Id { get; set; }
         public string? Email { get; set; }
 
         public IQueryable<User> ApplyFilter(IQueryable<User> query)
         {
-            if (Guid.HasValue)
+            if (Id.HasValue)
             {
-                query = query.Where(x => x.Id == Guid.Value);
+                query = query.Where(x => x.Id == Id);
 
                 return query;
             }

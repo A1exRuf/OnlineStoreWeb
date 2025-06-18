@@ -27,5 +27,6 @@ public class ResetTokenConfiguration : IEntityTypeConfiguration<ResetToken>
 
         // Indexes
         builder.HasIndex(rt => rt.UserId);
+        builder.HasIndex(rt => rt.Token);
     }
 }
