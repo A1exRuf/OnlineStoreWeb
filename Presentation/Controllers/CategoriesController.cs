@@ -1,10 +1,10 @@
 ﻿using Application.UseCases.Categories.Commands.Create;
+using Application.UseCases.Categories.Commands.Delete;
 using Application.UseCases.Categories.Commands.Update;
 using Application.UseCases.Categories.Queries.GetCategoriesQuery;
 using Application.UseCases.Categories.Queries.GetCategoryByIdQuery;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Presentation.Controllers;
@@ -48,7 +48,7 @@ public class CategoriesController : ApiController
 
     [Authorize(Policy = "OnlyForAdmin")]
     [HttpPatch("{id}")]
-    public async Task<IActionResult> UpdateCategory(
+    public async Task<IActionResult> Update(
     [FromRoute] Guid id,
     [FromBody] UpdateCategoryRequest request,
     CancellationToken cancellationToken)
@@ -61,5 +61,18 @@ public class CategoriesController : ApiController
         await Sender.Send(command);
 
         return Ok();
+    }
+
+    [Authorize(Policy = "OnlyForAdmin")]
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(
+        Guid id, 
+        CancellationToken cancellationToken)
+    {
+        var command = new DeleteCategoryCommand(id);
+
+        await Sender.Send(command);
+
+        return NoContent();
     }
 }
