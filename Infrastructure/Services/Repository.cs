@@ -54,23 +54,27 @@ public class Repository<TEntity> : IRepository<TEntity> where TEntity : Entity
     // Get
     public async Task<TEntity?> GetAsync(
         IFilter<TEntity> filter, 
-        bool asNoTracking = true, 
-        CancellationToken cancellationToken = default)
+        bool asNoTracking = true,
+        CancellationToken cancellationToken = default,
+        params Expression<Func<TEntity, object>>[] includes)
     {
         return await DbSet
-            .ApplyAsNoTracking(asNoTracking)
+            .ApplyIncludes(includes)
             .ApplyFilter(filter)
+            .ApplyAsNoTracking(asNoTracking)
             .FirstOrDefaultAsync(cancellationToken);
     }
 
     public async Task<TDto?> GetAsync<TDto>(
         IFilter<TEntity> filter, 
         bool asNoTracking = true, 
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default,
+        params Expression<Func<TEntity, object>>[] includes)
     {
         return await DbSet
-            .ApplyAsNoTracking(asNoTracking)
+            .ApplyIncludes(includes)
             .ApplyFilter(filter)
+            .ApplyAsNoTracking(asNoTracking)
             .ProjectToType<TDto>()
             .FirstOrDefaultAsync(cancellationToken);
     }
@@ -81,12 +85,14 @@ public class Repository<TEntity> : IRepository<TEntity> where TEntity : Entity
         bool asNoTracking = true, 
         Expression<Func<TEntity, TKey>>? orderBy = null, 
         bool descending = false, 
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default,
+        params Expression<Func<TEntity, object>>[] includes)
     {
         return await DbSet
-            .ApplyAsNoTracking(asNoTracking)
+            .ApplyIncludes(includes)
             .ApplyFilter(filter)
             .SortQuery(orderBy, descending)
+            .ApplyAsNoTracking(asNoTracking)
             .ProjectToType<TDto>()
             .ToListAsync(cancellationToken);
     }
@@ -99,12 +105,14 @@ public class Repository<TEntity> : IRepository<TEntity> where TEntity : Entity
         bool asNoTracking = true, 
         Expression<Func<TEntity, TKey>>? orderBy = null, 
         bool descending = false, 
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default,
+        params Expression<Func<TEntity, object>>[] includes)
     {
         var query = DbSet
-            .ApplyAsNoTracking(asNoTracking)
+            .ApplyIncludes(includes)
             .ApplyFilter(filter)
-            .SortQuery(orderBy, descending);
+            .SortQuery(orderBy, descending)
+            .ApplyAsNoTracking(asNoTracking);
 
         int totalCount = await query.CountAsync(cancellationToken);
 
