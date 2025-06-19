@@ -6,7 +6,7 @@ using Domain.Abstractions;
 using Domain.Entities;
 using Domain.Exceptions;
 
-namespace Application.UseCases.Categories.Queries;
+namespace Application.UseCases.Categories.Queries.GetCategoryByIdQuery;
 
 public class GetCategoryByIdQueryHandler : IQueryHandler<GetCategoryByIdQuery, CategoryDto>
 {
@@ -24,7 +24,7 @@ public class GetCategoryByIdQueryHandler : IQueryHandler<GetCategoryByIdQuery, C
     public async Task<CategoryDto> Handle(GetCategoryByIdQuery request, CancellationToken cancellationToken)
     {
         var root = await _categoryRepository.GetAsync<CategoryDto>(
-            filter:  new CategoryFilter { Id = request.Id },
+            filter: new CategoryFilter { Id = request.Id },
             cancellationToken: cancellationToken);
 
         if (root == null)

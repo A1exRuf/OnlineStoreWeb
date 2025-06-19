@@ -1,5 +1,6 @@
 ﻿using Application.UseCases.Categories.Commands.Create;
-using Application.UseCases.Categories.Queries;
+using Application.UseCases.Categories.Queries.GetCategoriesQuery;
+using Application.UseCases.Categories.Queries.GetCategoryByIdQuery;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -10,6 +11,15 @@ public class CategoriesController : ApiController
 {
     public CategoriesController(ISender sender) : base(sender)
     {
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Get(CancellationToken cancellationToken)
+    {
+        var query = new GetCategoriesQuery();
+        var result = await Sender.Send(query);
+
+        return Ok(result);
     }
 
     [HttpGet("{id}")]
