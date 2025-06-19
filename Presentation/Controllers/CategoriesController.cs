@@ -1,8 +1,10 @@
 ﻿using Application.UseCases.Categories.Commands.Create;
+using Application.UseCases.Categories.Commands.Update;
 using Application.UseCases.Categories.Queries.GetCategoriesQuery;
 using Application.UseCases.Categories.Queries.GetCategoryByIdQuery;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Presentation.Controllers;
@@ -42,5 +44,22 @@ public class CategoriesController : ApiController
         var result = await Sender.Send(command);
 
         return Created(string.Empty, result); // Insert URI!!!
+    }
+
+    [Authorize(Policy = "OnlyForAdmin")]
+    [HttpPatch("{id}")]
+    public async Task<IActionResult> UpdateCategory(
+    [FromRoute] Guid id,
+    [FromBody] UpdateCategoryRequest request,
+    CancellationToken cancellationToken)
+    {
+        var command = new UpdateCategoryCommand(
+            id, 
+            request.Name, 
+            request.ParentCategoryId);
+
+        await Sender.Send(command);
+
+        return Ok();
     }
 }
