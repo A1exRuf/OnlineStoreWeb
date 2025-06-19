@@ -1,8 +1,8 @@
 ﻿using Application.Abstractions;
 using Domain.Entities;
 using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
@@ -13,7 +13,7 @@ public class TokenProvider(IConfiguration configuration) : ITokenProvider
 {
     public string GenerateAccessToken(User user)
     {
-        string secretKey = configuration["Jwt:SecretKey"];
+        string secretKey = configuration["Jwt:SecretKey"]!;
         var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
 
         var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
@@ -24,7 +24,7 @@ public class TokenProvider(IConfiguration configuration) : ITokenProvider
             [
                 new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
                 new Claim(JwtRegisteredClaimNames.Email, user.Email),
-                new Claim("Role", user.Role.ToString())
+                new Claim(ClaimTypes.Role, user.Role.ToString())
             ]),
             Expires = DateTime.UtcNow.AddMinutes(configuration.GetValue<int>("Jwt:ExpirationMinutes")),
             SigningCredentials = credentials,
@@ -32,11 +32,11 @@ public class TokenProvider(IConfiguration configuration) : ITokenProvider
             Audience = configuration["Jwt:Audience"]
         };
 
-        var handler = new JwtSecurityTokenHandler();
+        var handler = new JsonWebTokenHandler();
 
         var token = handler.CreateToken(tokenDescriptor);
 
-        return handler.WriteToken(token);
+        return token;
     }
 
     public string GenerateRefreshToken()

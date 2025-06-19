@@ -39,9 +39,9 @@ public static class QueryableExtensions
         return filter.ApplyFilter(query);
     }
 
-    public static IQueryable<TEntity> SortQuery<TEntity, TKey>(
+    public static IQueryable<TEntity> SortQuery<TEntity>(
         this IQueryable<TEntity> query,
-        Expression<Func<TEntity, TKey>>? orderBy,
+        Expression<Func<TEntity, object>>? orderBy,
         bool descending)
         where TEntity : Entity
     {

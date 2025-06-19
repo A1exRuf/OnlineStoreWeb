@@ -1,4 +1,5 @@
-﻿using Application.UseCases.Categories.Commands;
+﻿using Application.UseCases.Categories.Commands.Create;
+using Application.UseCases.Categories.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -9,6 +10,17 @@ public class CategoriesController : ApiController
 {
     public CategoriesController(ISender sender) : base(sender)
     {
+    }
+
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetById(
+        Guid id,
+        CancellationToken cancellationToken)
+    {
+        var query = new GetCategoryByIdQuery(id);
+        var result = await Sender.Send(query);
+
+        return Ok(result);
     }
 
     [Authorize(Policy = "OnlyForAdmin")]

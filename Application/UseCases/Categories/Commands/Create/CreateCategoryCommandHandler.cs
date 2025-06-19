@@ -2,7 +2,7 @@
 using Domain.Abstractions;
 using Domain.Entities;
 
-namespace Application.UseCases.Categories.Commands;
+namespace Application.UseCases.Categories.Commands.Create;
 
 public class CreateCategoryCommandHandler : ICommandHandler<CreateCategoryCommand, Guid>
 {
@@ -10,7 +10,7 @@ public class CreateCategoryCommandHandler : ICommandHandler<CreateCategoryComman
     private readonly IUnitOfWork _unitOfWork;
 
     public CreateCategoryCommandHandler(
-        IRepository<Category> categoryRepository, 
+        IRepository<Category> categoryRepository,
         IUnitOfWork unitOfWork)
     {
         _categoryRepository = categoryRepository;
@@ -20,8 +20,8 @@ public class CreateCategoryCommandHandler : ICommandHandler<CreateCategoryComman
     public async Task<Guid> Handle(CreateCategoryCommand request, CancellationToken cancellationToken)
     {
         Category category = new(
-            Guid.NewGuid(), 
-            request.Name, 
+            Guid.NewGuid(),
+            request.Name,
             request.ParentCategoryId);
 
         await _categoryRepository.AddAsync(category, cancellationToken);

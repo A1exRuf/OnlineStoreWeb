@@ -3,7 +3,7 @@ using Domain.Abstractions;
 using Domain.Entities;
 using FluentValidation;
 
-namespace Application.UseCases.Categories.Commands;
+namespace Application.UseCases.Categories.Commands.Create;
 
 public class CreateCategoryValidator : AbstractValidator<CreateCategoryCommand>
 {
