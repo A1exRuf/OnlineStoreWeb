@@ -38,10 +38,10 @@ public interface IRepository<TEntity> where TEntity : Entity
         params Expression<Func<TEntity, object>>[] includes);
 
     // Get List
-    Task<List<TDto>> GetListAsync<TDto, TKey>(
+    Task<List<TDto>> GetListAsync<TDto>(
         IFilter<TEntity> filter,
         bool asNoTracking = true,
-        Expression<Func<TEntity, TKey>>? orderBy = null,
+        Expression<Func<TEntity, object>>? orderBy = null,
         bool descending = false,
         CancellationToken cancellationToken = default,
         params Expression<Func<TEntity, object>>[] includes);
@@ -52,7 +52,7 @@ public interface IRepository<TEntity> where TEntity : Entity
         int pageSize,
         IFilter<TEntity> filter,
         bool asNoTracking = true,
-        Expression<Func<TEntity, TKey>>? orderBy = null,
+        Expression<Func<TEntity, object>>? orderBy = null,
         bool descending = false,
         CancellationToken cancellationToken = default,
         params Expression<Func<TEntity, object>>[] includes);

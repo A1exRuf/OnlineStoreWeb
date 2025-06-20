@@ -1,4 +1,6 @@
-﻿using Application.Behaviors;
+﻿using Application.Abstractions;
+using Application.Behaviors;
+using Application.Services;
 using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.Configuration;
@@ -19,6 +21,8 @@ namespace Application
             services
                 .AddFluentEmail(configuration["Email:SenderEmail"], configuration["Email:Sender"])
                 .AddSmtpSender(configuration["Email:Host"], configuration.GetValue<int>("Email:Port"));
+
+            services.AddScoped<ICategoryTreeBuilder, CategoryTreeBuilder>();
 
             return services;
         }

@@ -80,10 +80,10 @@ public class Repository<TEntity> : IRepository<TEntity> where TEntity : Entity
     }
 
     // Get List
-    public async Task<List<TDto>> GetListAsync<TDto, TKey>(
+    public async Task<List<TDto>> GetListAsync<TDto>(
         IFilter<TEntity> filter, 
         bool asNoTracking = true, 
-        Expression<Func<TEntity, TKey>>? orderBy = null, 
+        Expression<Func<TEntity, object>>? orderBy = null, 
         bool descending = false, 
         CancellationToken cancellationToken = default,
         params Expression<Func<TEntity, object>>[] includes)
@@ -103,7 +103,7 @@ public class Repository<TEntity> : IRepository<TEntity> where TEntity : Entity
         int pageSize, 
         IFilter<TEntity> filter, 
         bool asNoTracking = true, 
-        Expression<Func<TEntity, TKey>>? orderBy = null, 
+        Expression<Func<TEntity, object>>? orderBy = null, 
         bool descending = false, 
         CancellationToken cancellationToken = default,
         params Expression<Func<TEntity, object>>[] includes)
