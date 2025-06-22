@@ -1,4 +1,5 @@
 ﻿using Application.UseCases.Products.Commands.Create;
+using Application.UseCases.Products.Queries.GetById;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -9,6 +10,17 @@ public class ProductsController : ApiController
 {
     public ProductsController(ISender sender) : base(sender)
     {
+    }
+
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetById(
+        Guid id,
+        CancellationToken cancellationToken)
+    {
+        var query = new GetProductByIdQuery(id);
+        var result = await Sender.Send(query);
+
+        return Ok(result);
     }
 
     [Authorize(Policy = "OnlyForAdmin")]

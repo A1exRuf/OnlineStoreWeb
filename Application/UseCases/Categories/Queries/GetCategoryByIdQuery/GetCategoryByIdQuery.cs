@@ -3,4 +3,4 @@ using Application.Dtos;
 
 namespace Application.UseCases.Categories.Queries.GetCategoryByIdQuery;
 
-public record GetCategoryByIdQuery(Guid Id) : IQuery<CategoryDto>;
+public record GetCategoryByIdQuery(Guid Id) : IQuery<CategoryWithChildrenDto>;

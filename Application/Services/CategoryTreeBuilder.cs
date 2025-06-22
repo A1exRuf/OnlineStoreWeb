@@ -15,16 +15,16 @@ public class CategoryTreeBuilder : ICategoryTreeBuilder
         _categoryRepository = categoryRepository;
     }
 
-    public async Task<CategoryDto> BuildTreeAsync(
-        CategoryDto root, 
+    public async Task<CategoryWithChildrenDto> BuildTreeAsync(
+        CategoryWithChildrenDto root, 
         CancellationToken cancellationToken)
     {
-        var children = await _categoryRepository.GetListAsync<CategoryDto>(
+        var children = await _categoryRepository.GetListAsync<CategoryWithChildrenDto>(
             filter: new CategoryFilter { ParentCategoryId = root.Id },
             cancellationToken: cancellationToken
         );
 
-        var subTrees = new List<CategoryDto>();
+        var subTrees = new List<CategoryWithChildrenDto>();
         foreach (var child in children)
         {
             subTrees.Add(await BuildTreeAsync(child, cancellationToken));

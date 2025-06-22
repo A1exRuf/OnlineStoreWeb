@@ -3,4 +3,4 @@ using Application.Dtos;
 
 namespace Application.UseCases.Categories.Queries.GetCategoriesQuery;
 
-public record GetCategoriesQuery : IQuery<List<CategoryDto>>;
+public record GetCategoriesQuery : IQuery<List<CategoryWithChildrenDto>>;
