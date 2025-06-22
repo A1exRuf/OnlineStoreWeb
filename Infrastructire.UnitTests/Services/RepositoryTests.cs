@@ -126,7 +126,7 @@ public class RepositoryTests
         var filter = new UserFilter(); // no filter, get all
 
         // Act
-        var list = await _repository.GetListAsync<UserDto, string>(
+        var list = await _repository.GetListAsync<UserDto>(
             filter,
             orderBy: u => u.Email);
 
@@ -151,7 +151,7 @@ public class RepositoryTests
         var filter = new UserFilter();
 
         // Act
-        var pagedList = await _repository.GetPagedListAsync<UserDto, string>(
+        var pagedList = await _repository.GetPagedListAsync<UserDto>(
             page: 2,
             pageSize: 3,
             filter: filter,

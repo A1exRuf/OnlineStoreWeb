@@ -1,4 +1,5 @@
 ﻿using Application.UseCases.Products.Commands.Create;
+using Application.UseCases.Products.Queries.Get;
 using Application.UseCases.Products.Queries.GetById;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -10,6 +11,16 @@ public class ProductsController : ApiController
 {
     public ProductsController(ISender sender) : base(sender)
     {
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Get(
+        [FromQuery] GetProductsQuery query,
+        CancellationToken cancellationToken)
+    {
+        var result = await Sender.Send(query);
+
+        return Ok(result);
     }
 
     [HttpGet("{id}")]

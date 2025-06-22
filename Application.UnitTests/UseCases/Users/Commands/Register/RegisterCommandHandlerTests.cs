@@ -10,6 +10,7 @@ namespace Application.UnitTests.UseCases.Users.Commands.Register;
 public class RegisterCommandHandlerTests
 {
     private readonly Mock<IRepository<User>> _userRepositoryMock;
+    private readonly Mock<IRepository<Cart>> _cartRepositoryMock;
     private readonly Mock<IUnitOfWork> _unitOfWorkMock;
     private readonly Mock<IPasswordHasher> _passwordHasherMock;
     private readonly RegisterCommandHandler _handler;
@@ -17,11 +18,13 @@ public class RegisterCommandHandlerTests
     public RegisterCommandHandlerTests()
     {
         _userRepositoryMock = new Mock<IRepository<User>>();
+        _cartRepositoryMock = new Mock<IRepository<Cart>>();
         _unitOfWorkMock = new Mock<IUnitOfWork>();
         _passwordHasherMock = new Mock<IPasswordHasher>();
 
         _handler = new RegisterCommandHandler(
             _userRepositoryMock.Object,
+            _cartRepositoryMock.Object,
             _unitOfWorkMock.Object,
             _passwordHasherMock.Object);
     }

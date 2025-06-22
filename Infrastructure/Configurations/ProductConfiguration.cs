@@ -18,12 +18,15 @@ internal class ProductConfiguration : IEntityTypeConfiguration<Product>
         builder.Property(p => p.Name).IsRequired().HasMaxLength(100);
         builder.Property(p => p.Description).IsRequired().HasMaxLength(4000);
         builder.Property(p => p.Price).IsRequired();
-        builder.Property(p => p.StockQuantity).IsRequired().HasAnnotation("MinValue", 1);
+        builder.Property(p => p.StockQuantity).IsRequired();
         builder.Property(p => p.CategoryId).IsRequired();
+        builder.Property(p => p.PurchaseCount).IsRequired();
+        builder.Property(p => p.CreatedAt).IsRequired();
         
         // Relations
         builder.HasOne(p => p.Category)
             .WithMany(c => c.Products)
+            .HasForeignKey(p => p.CategoryId)
             .OnDelete(DeleteBehavior.Restrict);
         builder.HasMany(p => p.Images)
             .WithOne(i => i.Product)
@@ -34,5 +37,6 @@ internal class ProductConfiguration : IEntityTypeConfiguration<Product>
         builder.HasIndex(p => p.Price);
         builder.HasIndex(p => p.StockQuantity);
         builder.HasIndex(p => p.CategoryId);
+        builder.HasIndex(p => p.CreatedAt);
     }
 }
