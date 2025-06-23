@@ -1,5 +1,5 @@
-﻿using Application.UseCases.Categories.Commands.Update;
-using Application.UseCases.Products.Commands.Create;
+﻿using Application.UseCases.Products.Commands.Create;
+using Application.UseCases.Products.Commands.Delete;
 using Application.UseCases.Products.Commands.Update;
 using Application.UseCases.Products.Queries.Get;
 using Application.UseCases.Products.Queries.GetById;
@@ -65,5 +65,16 @@ public class ProductsController : ApiController
         await Sender.Send(command);
 
         return Ok();
+    }
+
+    [Authorize(Policy = "OnlyForAdmin")]
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(
+        DeleteProductCommand command,
+        CancellationToken cancellationToken)
+    {
+        await Sender.Send(command, cancellationToken);
+
+        return NoContent();
     }
 }
