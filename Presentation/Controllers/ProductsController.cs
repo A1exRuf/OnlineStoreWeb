@@ -1,4 +1,6 @@
-﻿using Application.UseCases.Products.Commands.Create;
+﻿using Application.UseCases.Categories.Commands.Update;
+using Application.UseCases.Products.Commands.Create;
+using Application.UseCases.Products.Commands.Update;
 using Application.UseCases.Products.Queries.Get;
 using Application.UseCases.Products.Queries.GetById;
 using MediatR;
@@ -43,5 +45,25 @@ public class ProductsController : ApiController
         var result = await Sender.Send(command);
 
         return Created(string.Empty, result);
+    }
+
+    [Authorize(Policy = "OnlyForAdmin")]
+    [HttpPatch("{id}")]
+    public async Task<IActionResult> Update(
+    [FromRoute] Guid id,
+    [FromBody] UpdateProductRequest request,
+    CancellationToken cancellationToken)
+    {
+        var command = new UpdateProductCommand(
+            id,
+            request.Name,
+            request.Description,
+            request.Price,
+            request.StockQuantity,
+            request.CategoryId);
+
+        await Sender.Send(command);
+
+        return Ok();
     }
 }

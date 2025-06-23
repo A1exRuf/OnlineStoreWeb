@@ -1,4 +1,5 @@
 using Application;
+using Application.Mapping;
 using Infrastructure;
 using OnlineStoreWeb.Extensions;
 using OnlineStoreWeb.Middleware;
@@ -16,6 +17,8 @@ builder.Services.AddJwtAuthentication(builder.Configuration);
 builder.Services.AddApplication(builder.Configuration);
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddTransient<ExceptionHandlingMiddleware>();
+
+MappingConfig.Configure();
 
 var app = builder.Build();
 
