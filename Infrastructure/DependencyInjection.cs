@@ -1,4 +1,5 @@
 ﻿using Application.Abstractions;
+using Azure.Storage.Blobs;
 using Domain.Abstractions;
 using Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
@@ -13,6 +14,11 @@ namespace Infrastructure
         {
             services.AddDbContext<ApplicationDbContext>(builder => 
             builder.UseNpgsql(configuration.GetConnectionString("Database")));
+
+            var blobStorageConnection = configuration.GetConnectionString("BlobStorage");
+            var blobStorageOptions = new BlobClientOptions(BlobClientOptions.ServiceVersion.V2019_12_12);
+            services.AddSingleton(_ => new BlobServiceClient(blobStorageConnection, blobStorageOptions));
+            services.AddSingleton<IBlobService, BlobService>();
 
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
             services.AddScoped<IUnitOfWork, UnitOfWork>();

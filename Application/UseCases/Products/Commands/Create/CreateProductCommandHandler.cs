@@ -11,7 +11,6 @@ public class CreateProductCommandHandler : ICommandHandler<CreateProductCommand,
 
     public CreateProductCommandHandler(
         IRepository<Product> productRepository, 
-        IRepository<Category> categoryRepository, 
         IUnitOfWork unitOfWork)
     {
         _productRepository = productRepository;

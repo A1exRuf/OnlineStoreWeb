@@ -1,4 +1,5 @@
-﻿using Application.UseCases.Products.Commands.Create;
+﻿using Application.UseCases.Products.Commands.AddImage;
+using Application.UseCases.Products.Commands.Create;
 using Application.UseCases.Products.Commands.Delete;
 using Application.UseCases.Products.Commands.Update;
 using Application.UseCases.Products.Queries.Get;
@@ -45,6 +46,24 @@ public class ProductsController : ApiController
         var result = await Sender.Send(command);
 
         return Created(string.Empty, result);
+    }
+
+    [Authorize(Policy = "OnlyForAdmin")]
+    [HttpPost("{id}/images")]
+    public async Task<IActionResult> AddImage(
+        [FromRoute] Guid id,
+        [FromForm] AddProductImageRequest request,
+        CancellationToken cancellationToken)
+    {
+        var command = new AddProductImageCommand(
+            id,
+            request.Image,
+            request.AltText,
+            request.DisplayOrder);
+
+        await Sender.Send(command);
+
+        return Ok();
     }
 
     [Authorize(Policy = "OnlyForAdmin")]

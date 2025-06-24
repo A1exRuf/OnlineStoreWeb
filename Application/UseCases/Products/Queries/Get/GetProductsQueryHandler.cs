@@ -4,7 +4,6 @@ using Application.Filters;
 using Domain.Abstractions;
 using Domain.Common;
 using Domain.Entities;
-using System.Globalization;
 using System.Linq.Expressions;
 
 namespace Application.UseCases.Products.Queries.Get;

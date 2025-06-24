@@ -8,5 +8,6 @@ public record GetProductsByIdResponse(
     string Description,
     decimal Price,
     int StockQuantity,
-    CategoryDto Category);
+    CategoryDto Category,
+    List<ProductImageDto> Images);
 

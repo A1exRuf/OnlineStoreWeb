@@ -29,3 +29,12 @@ services:
     ports:
       - 8082:80
       - 25:25
+
+  blob-storage:
+    image: mcr.microsoft.com/azure-storage/azurite:3.9.0
+    container_name: blob-storage
+    volumes:
+      - ./.containers/blob_storage:/data
+    ports:
+      - "10000:10000"
+    command: "azurite-blob --blobHost 0.0.0.0 -l /data"
