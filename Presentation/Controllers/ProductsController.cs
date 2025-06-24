@@ -1,6 +1,7 @@
 ﻿using Application.UseCases.Products.Commands.AddImage;
 using Application.UseCases.Products.Commands.Create;
 using Application.UseCases.Products.Commands.Delete;
+using Application.UseCases.Products.Commands.DeleteImage;
 using Application.UseCases.Products.Commands.Update;
 using Application.UseCases.Products.Queries.Get;
 using Application.UseCases.Products.Queries.GetById;
@@ -89,9 +90,21 @@ public class ProductsController : ApiController
     [Authorize(Policy = "OnlyForAdmin")]
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(
-        DeleteProductCommand command,
+        [FromRoute] DeleteProductCommand command,
         CancellationToken cancellationToken)
     {
+        await Sender.Send(command, cancellationToken);
+
+        return NoContent();
+    }
+
+    [Authorize(Policy = "OnlyForAdmin")]
+    [HttpDelete("images/{id}")]
+    public async Task<IActionResult> DeleteImage(
+        [FromRoute] Guid id,
+        CancellationToken cancellationToken)
+    {
+        var command = new DeleteProductImageCommand(id);
         await Sender.Send(command, cancellationToken);
 
         return NoContent();
