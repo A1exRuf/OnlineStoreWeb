@@ -32,11 +32,9 @@ public class RequestResetPasswordCommandHandler : ICommandHandler<RequestResetPa
 
     public async Task Handle(RequestResetPasswordCommand request, CancellationToken cancellationToken)
     {
-        // Retrieve UserId for token (email existense validated )
-        IFilter<User> userFilter = new UserFilter { Email = request.Email };
-        EntityIdDto? userId = await _userRepository
-            .GetAsync<EntityIdDto>(
-            userFilter,
+        // Retrieve UserId for token (email existense validated)
+        var userId = await _userRepository.GetAsync<EntityIdDto>(
+            filter: new UserFilter { Email = request.Email },
             asNoTracking: true,
             cancellationToken);
 
@@ -47,8 +45,9 @@ public class RequestResetPasswordCommandHandler : ICommandHandler<RequestResetPa
            userId.Id,
            token);
 
-        IFilter<ResetToken> resetTokenFilter = new ResetTokenFilter { UserId = userId.Id };
-        await _resetTokenRepository.RemoveAsync(resetTokenFilter);
+        await _resetTokenRepository.RemoveAsync(
+            filter: new ResetTokenFilter { UserId = userId.Id });
+
         await _resetTokenRepository.AddAsync(resetToken);
 
         // Send Email with token

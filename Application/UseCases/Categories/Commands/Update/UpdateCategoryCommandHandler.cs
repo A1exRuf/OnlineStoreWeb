@@ -1,9 +1,8 @@
 ﻿using Application.Abstractions.Messaging;
-using Application.Exceptions;
 using Application.Filters;
 using Domain.Abstractions;
 using Domain.Entities;
-using Domain.Exceptions;
+using Mapster;
 
 namespace Application.UseCases.Categories.Commands.Update;
 
@@ -25,23 +24,9 @@ public class UpdateCategoryCommandHandler : ICommandHandler<UpdateCategoryComman
             asNoTracking: false,
             cancellationToken);
 
-        if (category == null)
-            throw new NotFoundByIdException<Category>(request.Id);
+        request.Adapt(category);
 
-        if (request.Name != null)
-        {
-            category.Name = request.Name;
-        }
-
-        if (request.ParentCategoryId != null)
-        {
-            if (request.ParentCategoryId == category.Id)
-                throw new CircularDependencyException<Category>();
-
-            category.ParentCategoryId = request.ParentCategoryId;
-        }
-
-        _categoryRepository.Update(category);
+        _categoryRepository.Update(category!);
 
         await _unitOfWork.SaveChangesAsync();
     }

@@ -15,5 +15,5 @@ public class PromoCode : Entity
         IsActive = isActive;
     }
 
-    private PromoCode() { }
+    public PromoCode() { }
 }

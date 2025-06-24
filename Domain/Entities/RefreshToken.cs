@@ -8,15 +8,14 @@ public class RefreshToken : Entity
     public Guid UserId { get; private set; }
     public User User { get; private set; }
 
-    public RefreshToken(Guid id, string token, Guid userId) : base(id)
+    public RefreshToken(string token, Guid userId)
     {
-        Id = id;
         Token = token;
         ExpiresOnUtc = DateTime.UtcNow.AddDays(7);
         UserId = userId;
     }
 
-    private RefreshToken() { }
+    public RefreshToken() { }
 
     public void UpdateToken(string token)
     {

@@ -19,7 +19,7 @@ namespace Application.Filters
 
             if (!string.IsNullOrEmpty(Email))
             {
-                query = query.Where(x => x.Email == Email);
+                query = query.Where(x => x.Email.ToLower() == Email.ToLower());
             }
 
             return query;

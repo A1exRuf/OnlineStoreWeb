@@ -11,7 +11,7 @@ public class User : Entity
     public List<Order> Orders { get; private set; }
     public Cart Cart { get; private set; }
 
-    public User (Guid id, string email, string passwordHash, UserRole role) : base(id)
+    public User (string email, string passwordHash, UserRole role)
     {
         Email = email;
         PasswordHash = passwordHash;
@@ -20,5 +20,5 @@ public class User : Entity
         Orders = [];
     }
 
-    private User () { }
+    public User () { }
 }

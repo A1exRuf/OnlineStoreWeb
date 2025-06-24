@@ -30,7 +30,6 @@ public class RegisterCommandHandler : ICommandHandler<RegisterCommand, Guid>
         var hashedPassword = _passwordHasher.HashPassword(request.Password);
 
         var user = new User(
-            Guid.NewGuid(), 
             request.Email, 
             hashedPassword, 
             Enum.Parse<UserRole>(request.Role, true));

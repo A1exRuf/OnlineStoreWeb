@@ -14,6 +14,6 @@
             Products = [];
         }
 
-        private Category () { }
+        public Category () { }
     }
 }

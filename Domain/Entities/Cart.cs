@@ -12,5 +12,5 @@ public class Cart : Entity
         Items = [];
     }
 
-    private Cart() { }
+    public Cart() { }
 }

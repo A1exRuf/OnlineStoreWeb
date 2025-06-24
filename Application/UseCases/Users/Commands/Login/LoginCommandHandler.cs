@@ -32,10 +32,9 @@ public class LoginCommandHandler : ICommandHandler<LoginCommand, LoginResponse>
     public async Task<LoginResponse> Handle(LoginCommand request, CancellationToken cancellationToken)
     {
         // User verification
-        var userFilter = new UserFilter { Email = request.Email };
 
         var user = await  _userRepository.GetAsync(
-            userFilter,
+            filter: new UserFilter { Email = request.Email },
             cancellationToken: cancellationToken);
 
         if (user == null) 
@@ -49,13 +48,15 @@ public class LoginCommandHandler : ICommandHandler<LoginCommand, LoginResponse>
         // Building tokens
         var acсessToken = _tokenProvider.GenerateAccessToken(user);
         var refreshToken = new RefreshToken(
-            Guid.NewGuid(),
             _tokenProvider.GenerateRefreshToken(),
             user.Id);
 
-        var refreshTokenFilter = new RefreshTokenFilter { UserId = user.Id };
-        await _refreshTokenRepository.RemoveAsync(refreshTokenFilter, cancellationToken);
+        await _refreshTokenRepository.RemoveAsync(
+            filter: new RefreshTokenFilter { UserId = user.Id }, 
+            cancellationToken);
+
         await _refreshTokenRepository.AddAsync(refreshToken, cancellationToken);
+
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         var response = new LoginResponse(acсessToken, refreshToken.Token);

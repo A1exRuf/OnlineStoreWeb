@@ -1,6 +1,7 @@
 ﻿using Application.Abstractions.Messaging;
 using Domain.Abstractions;
 using Domain.Entities;
+using Mapster;
 
 namespace Application.UseCases.Categories.Commands.Create;
 
@@ -19,12 +20,10 @@ public class CreateCategoryCommandHandler : ICommandHandler<CreateCategoryComman
 
     public async Task<Guid> Handle(CreateCategoryCommand request, CancellationToken cancellationToken)
     {
-        Category category = new(
-            Guid.NewGuid(),
-            request.Name,
-            request.ParentCategoryId);
+        var category = request.Adapt<Category>();
 
         await _categoryRepository.AddAsync(category, cancellationToken);
+
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         return category.Id;
