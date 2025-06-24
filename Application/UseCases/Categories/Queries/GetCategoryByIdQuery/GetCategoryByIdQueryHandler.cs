@@ -8,7 +8,7 @@ using Domain.Exceptions;
 
 namespace Application.UseCases.Categories.Queries.GetCategoryByIdQuery;
 
-public class GetCategoryByIdQueryHandler : IQueryHandler<GetCategoryByIdQuery, CategoryDto>
+public class GetCategoryByIdQueryHandler : IQueryHandler<GetCategoryByIdQuery, CategoryWithChildrenDto>
 {
     private readonly IRepository<Category> _categoryRepository;
     private readonly ICategoryTreeBuilder _categoryTreeBuilder;
@@ -21,9 +21,9 @@ public class GetCategoryByIdQueryHandler : IQueryHandler<GetCategoryByIdQuery, C
         _categoryTreeBuilder = categoryTreeBuilder;
     }
 
-    public async Task<CategoryDto> Handle(GetCategoryByIdQuery request, CancellationToken cancellationToken)
+    public async Task<CategoryWithChildrenDto> Handle(GetCategoryByIdQuery request, CancellationToken cancellationToken)
     {
-        var root = await _categoryRepository.GetAsync<CategoryDto>(
+        var root = await _categoryRepository.GetAsync<CategoryWithChildrenDto>(
             filter: new CategoryFilter { Id = request.Id },
             cancellationToken: cancellationToken);
 

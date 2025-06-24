@@ -47,7 +47,7 @@ public interface IRepository<TEntity> where TEntity : Entity
         params Expression<Func<TEntity, object>>[] includes);
 
     // Get Paged List
-    Task<PagedList<TDto>> GetPagedListAsync<TDto, TKey>(
+    Task<PagedList<TDto>> GetPagedListAsync<TDto>(
         int page,
         int pageSize,
         IFilter<TEntity> filter,

@@ -16,7 +16,7 @@ internal class ProductImageConfiguration : IEntityTypeConfiguration<ProductImage
 
         // Properties
         builder.Property(pi => pi.ProductId).IsRequired();
-        builder.Property(pi => pi.ImageUrl).IsRequired().HasMaxLength(50);
+        builder.Property(pi => pi.ImageUrl).IsRequired();
         builder.Property(pi => pi.AltText).HasMaxLength(20);
         builder.Property(pi => pi.DisplayOrder).IsRequired();
 

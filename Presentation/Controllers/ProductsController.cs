@@ -1,0 +1,112 @@
+﻿using Application.UseCases.Products.Commands.AddImage;
+using Application.UseCases.Products.Commands.Create;
+using Application.UseCases.Products.Commands.Delete;
+using Application.UseCases.Products.Commands.DeleteImage;
+using Application.UseCases.Products.Commands.Update;
+using Application.UseCases.Products.Queries.Get;
+using Application.UseCases.Products.Queries.GetById;
+using MediatR;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+
+namespace Presentation.Controllers;
+
+public class ProductsController : ApiController
+{
+    public ProductsController(ISender sender) : base(sender)
+    {
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Get(
+        [FromQuery] GetProductsQuery query,
+        CancellationToken cancellationToken)
+    {
+        var result = await Sender.Send(query);
+
+        return Ok(result);
+    }
+
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetById(
+        Guid id,
+        CancellationToken cancellationToken)
+    {
+        var query = new GetProductByIdQuery(id);
+        var result = await Sender.Send(query);
+
+        return Ok(result);
+    }
+
+    [Authorize(Policy = "OnlyForAdmin")]
+    [HttpPost]
+    public async Task<IActionResult> Create(
+        CreateProductCommand command,
+        CancellationToken cancellationToken)
+    {
+        var result = await Sender.Send(command);
+
+        return Created(string.Empty, result);
+    }
+
+    [Authorize(Policy = "OnlyForAdmin")]
+    [HttpPost("{id}/images")]
+    public async Task<IActionResult> AddImage(
+        [FromRoute] Guid id,
+        [FromForm] AddProductImageRequest request,
+        CancellationToken cancellationToken)
+    {
+        var command = new AddProductImageCommand(
+            id,
+            request.Image,
+            request.AltText,
+            request.DisplayOrder);
+
+        await Sender.Send(command);
+
+        return Ok();
+    }
+
+    [Authorize(Policy = "OnlyForAdmin")]
+    [HttpPatch("{id}")]
+    public async Task<IActionResult> Update(
+    [FromRoute] Guid id,
+    [FromBody] UpdateProductRequest request,
+    CancellationToken cancellationToken)
+    {
+        var command = new UpdateProductCommand(
+            id,
+            request.Name,
+            request.Description,
+            request.Price,
+            request.StockQuantity,
+            request.CategoryId);
+
+        await Sender.Send(command);
+
+        return Ok();
+    }
+
+    [Authorize(Policy = "OnlyForAdmin")]
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(
+        [FromRoute] DeleteProductCommand command,
+        CancellationToken cancellationToken)
+    {
+        await Sender.Send(command, cancellationToken);
+
+        return NoContent();
+    }
+
+    [Authorize(Policy = "OnlyForAdmin")]
+    [HttpDelete("images/{id}")]
+    public async Task<IActionResult> DeleteImage(
+        [FromRoute] Guid id,
+        CancellationToken cancellationToken)
+    {
+        var command = new DeleteProductImageCommand(id);
+        await Sender.Send(command, cancellationToken);
+
+        return NoContent();
+    }
+}

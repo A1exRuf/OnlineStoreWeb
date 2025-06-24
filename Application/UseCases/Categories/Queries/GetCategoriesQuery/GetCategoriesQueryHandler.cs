@@ -7,7 +7,7 @@ using Domain.Entities;
 
 namespace Application.UseCases.Categories.Queries.GetCategoriesQuery;
 
-public class GetCategoriesQueryHandler : IQueryHandler<GetCategoriesQuery, List<CategoryDto>>
+public class GetCategoriesQueryHandler : IQueryHandler<GetCategoriesQuery, List<CategoryWithChildrenDto>>
 {
     private readonly IRepository<Category> _categoryRepository;
     private readonly ICategoryTreeBuilder _categoryTreeBuilder;
@@ -18,14 +18,14 @@ public class GetCategoriesQueryHandler : IQueryHandler<GetCategoriesQuery, List<
         _categoryTreeBuilder = categoryTreeBuilder;
     }
 
-    public async Task<List<CategoryDto>> Handle(GetCategoriesQuery request, CancellationToken cancellationToken)
+    public async Task<List<CategoryWithChildrenDto>> Handle(GetCategoriesQuery request, CancellationToken cancellationToken)
     {
-        var roots = await _categoryRepository.GetListAsync<CategoryDto>(
+        var roots = await _categoryRepository.GetListAsync<CategoryWithChildrenDto>(
             filter: new CategoryFilter { OnlyRoots = true },
             orderBy: x => x.Name,
             cancellationToken: cancellationToken);
 
-        var result = new List<CategoryDto>();
+        var result = new List<CategoryWithChildrenDto>();
 
         foreach (var root in roots)
         {

@@ -98,7 +98,7 @@ public class Repository<TEntity> : IRepository<TEntity> where TEntity : Entity
     }
 
     // Get Paged List
-    public async Task<PagedList<TDto>> GetPagedListAsync<TDto, TKey>(
+    public async Task<PagedList<TDto>> GetPagedListAsync<TDto>(
         int page, 
         int pageSize, 
         IFilter<TEntity> filter, 

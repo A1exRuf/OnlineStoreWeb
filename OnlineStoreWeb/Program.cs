@@ -1,17 +1,24 @@
 using Application;
+using Application.Mapping;
 using Infrastructure;
 using OnlineStoreWeb.Extensions;
 using OnlineStoreWeb.Middleware;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+});
 builder.Services.AddSwaggerGen();
 builder.Services.AddSwaggerJwt();
 builder.Services.AddJwtAuthentication(builder.Configuration);
 builder.Services.AddApplication(builder.Configuration);
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddTransient<ExceptionHandlingMiddleware>();
+
+MappingConfig.Configure();
 
 var app = builder.Build();
 

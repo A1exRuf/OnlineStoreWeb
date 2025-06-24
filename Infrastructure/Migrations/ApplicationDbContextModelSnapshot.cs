@@ -158,6 +158,9 @@ namespace Infrastructure.Migrations
                     b.Property<Guid>("CategoryId")
                         .HasColumnType("uuid");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasMaxLength(4000)
@@ -171,13 +174,17 @@ namespace Infrastructure.Migrations
                     b.Property<decimal>("Price")
                         .HasColumnType("numeric");
 
+                    b.Property<int>("PurchaseCount")
+                        .HasColumnType("integer");
+
                     b.Property<int>("StockQuantity")
-                        .HasColumnType("integer")
-                        .HasAnnotation("MinValue", 1);
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
                     b.HasIndex("CategoryId");
+
+                    b.HasIndex("CreatedAt");
 
                     b.HasIndex("Name");
 
@@ -203,8 +210,7 @@ namespace Infrastructure.Migrations
 
                     b.Property<string>("ImageUrl")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
+                        .HasColumnType("text");
 
                     b.Property<Guid>("ProductId")
                         .HasColumnType("uuid");
