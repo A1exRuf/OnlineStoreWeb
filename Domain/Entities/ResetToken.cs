@@ -16,5 +16,5 @@ public class ResetToken : Entity
         ExpiresOnUtc = DateTime.UtcNow.AddMinutes(30);
     }
 
-    private ResetToken() { }
+    public ResetToken() { }
 }

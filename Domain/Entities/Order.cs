@@ -22,8 +22,8 @@ public class Order : Entity
         Status = OrderStatus.Created;
         Items = [];
     }
-    
-    private Order() { }
+
+    public Order() { }
 
     public void StatusToPaid()
     {

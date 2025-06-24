@@ -30,10 +30,10 @@ public class Product : Entity
         Images = new List<ProductImage>();
     }
 
+    public Product() { }
+
     public void IncrementPurchaseCount(int quantity)
     {
         PurchaseCount += quantity;
     }
-
-    private Product() { }
 }

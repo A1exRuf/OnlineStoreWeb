@@ -15,5 +15,5 @@ public class CartItem : Entity
         Quantity = quantity;
     }
 
-    private CartItem() { }
+    public CartItem() { }
 }

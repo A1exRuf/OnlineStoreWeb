@@ -16,7 +16,5 @@ public class ProductImage : Entity
         DisplayOrder = displayOrder ?? 1;
     }
 
-    private ProductImage() { }
-
-
+    public ProductImage() { }
 }

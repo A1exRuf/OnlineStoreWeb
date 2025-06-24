@@ -16,4 +16,6 @@ public class OrderItem : Entity
         Quantity = quantity;
         UnitPrice = unitPrice;
     }
+
+    public OrderItem() { }
 }

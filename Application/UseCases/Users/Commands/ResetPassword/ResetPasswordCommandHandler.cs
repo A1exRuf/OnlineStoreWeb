@@ -30,36 +30,28 @@ public class ResetPasswordCommandHandler : ICommandHandler<ResetPasswordCommand>
 
     public async Task Handle(ResetPasswordCommand request, CancellationToken cancellationToken)
     {
+        // Check Reset Token
         var userId = await _userRepository.GetAsync<EntityIdDto>(
             filter: new UserFilter { Email = request.Email }, 
             asNoTracking: true,
-            cancellationToken);
-
-        if (userId == null)
-        {
-            throw new NoUserWithSuchEmailException(request.Email);
-        }    
+            cancellationToken);   
 
         var resetToken = await _resetTokenRepository.GetAsync(
-            filter: new ResetTokenFilter { UserId = userId, Token = request.ResetToken },
+            filter: new ResetTokenFilter { UserId = userId!, Token = request.ResetToken },
             asNoTracking: false,
             cancellationToken);
 
-        if (resetToken == null)
+        if (resetToken == null || resetToken.ExpiresOnUtc < DateTime.UtcNow || resetToken.UserId != userId!)
             throw new InvalidResetTokenException();
 
-        if (resetToken.ExpiresOnUtc < DateTime.UtcNow)
-            throw new ExpiredResetTokenException();
-
+        // Change password
         var user = await _userRepository.GetAsync(
-            filter: new UserFilter { Id = userId },
+            filter: new UserFilter { Id = userId! },
             asNoTracking: false,
             cancellationToken);
 
         if (user == null)
-        {
-            throw new NotFoundByIdException<User>(userId);
-        }
+            throw new NotFoundByIdException<User>(userId!);
 
         user.PasswordHash = _passwordHasher.HashPassword(request.Password);
         _userRepository.Update(user);
