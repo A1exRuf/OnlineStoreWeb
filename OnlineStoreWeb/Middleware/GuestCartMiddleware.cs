@@ -1,6 +1,5 @@
 ﻿using Application.Abstractions;
 using Application.Dtos.Cart;
-using Domain.Entities;
 
 namespace OnlineStoreWeb.GuestCartMiddleware;
 

@@ -1,4 +1,5 @@
 ﻿using Application.UseCases.Carts.Commands.AddItem;
+using Application.UseCases.Carts.Commands.ChangeQuantity;
 using Application.UseCases.Carts.Queries.Get;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -30,4 +31,16 @@ public class CartController : ApiController
         return Ok(result);
     }
 
+    [HttpPut("items/{id}/quantity")]
+    public async Task<IActionResult> ChangeQuantity(
+        [FromRoute] Guid id,
+        [FromBody] ChangeCartItemQuantityRequest request,
+        CancellationToken cancellationToken)
+    {
+        await Sender.Send(
+            new ChangeCartItemQuantityCommand(id, request.Quantity),
+            cancellationToken);
+
+        return Ok();
+    }
 }

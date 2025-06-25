@@ -46,7 +46,7 @@ public class AddCartItemCommandHandler : ICommandHandler<AddCartItemCommand, Gui
 
             cart.Items.Add(cartItem);
 
-            await _unitOfWork.SaveChangesAsync();
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return cart.Id;
         }
@@ -57,7 +57,7 @@ public class AddCartItemCommandHandler : ICommandHandler<AddCartItemCommand, Gui
             var cart = await _guestCartService.GetCartAsync(cartId)
                 ?? throw new NotFoundByIdException<Cart>(cartId);
 
-            var cartItem = new CartItemDto(
+            var cartItem = new GuestCartItemDto(
                 cartId,
                 request.ProductId,
                 request.Quantity);
