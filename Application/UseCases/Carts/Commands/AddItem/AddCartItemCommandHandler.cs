@@ -1,5 +1,6 @@
 ﻿using Application.Abstractions;
 using Application.Abstractions.Messaging;
+using Application.Dtos;
 using Application.Dtos.CartItem;
 using Application.Filters;
 using Domain.Abstractions;
@@ -11,17 +12,20 @@ namespace Application.UseCases.Carts.Commands.AddItem;
 public class AddCartItemCommandHandler : ICommandHandler<AddCartItemCommand, Guid>
 {
     private readonly IRepository<Cart> _cartRepository;
+    private readonly IRepository<CartItem> _cartItemRepository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly ICurrentUserService _currentUserService;
     private readonly IGuestCartService _guestCartService;
 
     public AddCartItemCommandHandler(
         IRepository<Cart> cartRepository, 
+        IRepository<CartItem> cartItemRepository, 
         IUnitOfWork unitOfWork, 
         ICurrentUserService currentUserService, 
         IGuestCartService guestCartService)
     {
         _cartRepository = cartRepository;
+        _cartItemRepository = cartItemRepository;
         _unitOfWork = unitOfWork;
         _currentUserService = currentUserService;
         _guestCartService = guestCartService;
@@ -33,18 +37,17 @@ public class AddCartItemCommandHandler : ICommandHandler<AddCartItemCommand, Gui
 
         if (userId.HasValue) // For customers
         {
-            var cart = await _cartRepository.GetAsync(
+            var cart = await _cartRepository.GetAsync<EntityIdDto>(
                 filter: new CartFilter { UserId = userId },
-                asNoTracking: false,
-                cancellationToken,
-                includes: c => c.Items);
+                asNoTracking: true,
+                cancellationToken);
 
             var cartItem = new CartItem(
                 cart!.Id,
                 request.ProductId,
                 request.Quantity);
 
-            cart.Items.Add(cartItem);
+            await _cartItemRepository.AddAsync(cartItem);
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
