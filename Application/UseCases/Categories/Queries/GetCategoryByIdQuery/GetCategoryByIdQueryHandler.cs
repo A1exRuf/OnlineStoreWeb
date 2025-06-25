@@ -1,6 +1,6 @@
 ﻿using Application.Abstractions;
 using Application.Abstractions.Messaging;
-using Application.Dtos;
+using Application.Dtos.Category;
 using Application.Filters;
 using Domain.Abstractions;
 using Domain.Entities;

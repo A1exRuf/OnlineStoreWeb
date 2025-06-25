@@ -1,4 +1,4 @@
-﻿using Application.Dtos;
+﻿using Application.Dtos.ProductImage;
 using Domain.Entities;
 
 namespace Application.Abstractions;

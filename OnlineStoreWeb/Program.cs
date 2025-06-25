@@ -2,6 +2,7 @@ using Application;
 using Application.Mapping;
 using Infrastructure;
 using OnlineStoreWeb.Extensions;
+using OnlineStoreWeb.GuestCartMiddleware;
 using OnlineStoreWeb.Middleware;
 using System.Text.Json.Serialization;
 
@@ -17,6 +18,7 @@ builder.Services.AddJwtAuthentication(builder.Configuration);
 builder.Services.AddApplication(builder.Configuration);
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddTransient<ExceptionHandlingMiddleware>();
+builder.Services.AddScoped<GuestCartMiddleware>();
 
 MappingConfig.Configure();
 
@@ -36,6 +38,7 @@ app.UseHttpsRedirection();
 app.UseRouting();
 
 app.UseAuthentication();
+app.UseMiddleware<GuestCartMiddleware>();
 app.UseAuthorization();
 
 app.UseEndpoints(endpoints => endpoints.MapControllers());

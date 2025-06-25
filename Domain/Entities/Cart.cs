@@ -6,11 +6,9 @@ public class Cart : Entity
     public User User { get; set; }
     public List<CartItem> Items { get; private set; }
 
-    public Cart(Guid id, Guid userId) : base(id)
+    public Cart(Guid? userId = null)
     {
         UserId = userId;
         Items = [];
     }
-
-    public Cart() { }
 }
