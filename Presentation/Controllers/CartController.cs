@@ -1,5 +1,6 @@
 ﻿using Application.UseCases.Carts.Commands.AddItem;
 using Application.UseCases.Carts.Commands.ChangeQuantity;
+using Application.UseCases.Carts.Commands.DeleteItem;
 using Application.UseCases.Carts.Queries.Get;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -16,7 +17,9 @@ public class CartController : ApiController
     public async Task<IActionResult> Get(
         CancellationToken cancellationToken)
     {
-        var result = await Sender.Send(new GetCartQuery(), cancellationToken);
+        var query = new GetCartQuery();
+
+        var result = await Sender.Send(query, cancellationToken);
 
         return Ok(result);
     }
@@ -37,10 +40,22 @@ public class CartController : ApiController
         [FromBody] ChangeCartItemQuantityRequest request,
         CancellationToken cancellationToken)
     {
-        await Sender.Send(
-            new ChangeCartItemQuantityCommand(id, request.Quantity),
-            cancellationToken);
+        var command = new ChangeCartItemQuantityCommand(id, request.Quantity);
+
+        await Sender.Send(command, cancellationToken);
 
         return Ok();
+    }
+
+    [HttpDelete("items/{id}")]
+    public async Task<IActionResult> DeleteItem(
+        [FromRoute] Guid id,
+        CancellationToken cancellationToken)
+    {
+        var command = new DeleteCartItemCommand(id);
+
+        await Sender.Send(command, cancellationToken);
+
+        return NoContent();
     }
 }

@@ -1,6 +1,5 @@
 ﻿using Application.Abstractions;
 using Application.Dtos.Cart;
-using Domain.Entities;
 using StackExchange.Redis;
 using System.Text.Json;
 using System.Text.Json.Serialization;
