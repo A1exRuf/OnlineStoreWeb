@@ -1,5 +1,5 @@
 ﻿using Application.Abstractions.Messaging;
-using Application.Dtos;
+using Application.Dtos.Category;
 
 namespace Application.UseCases.Categories.Queries.GetCategoriesQuery;
 

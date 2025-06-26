@@ -1,4 +1,4 @@
-﻿using Application.Dtos;
+﻿using Application.Dtos.ProductImage;
 
 namespace Application.UseCases.Products.Queries.Get;
 

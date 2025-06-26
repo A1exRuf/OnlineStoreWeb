@@ -36,9 +36,7 @@ public class RegisterCommandHandler : ICommandHandler<RegisterCommand, Guid>
 
         await _userRepository.AddAsync(user, cancellationToken);
 
-        var cart = new Cart(
-            Guid.NewGuid(),
-            user.Id);
+        var cart = new Cart(user.Id);
 
         await _cartRepository.AddAsync(cart, cancellationToken);
 

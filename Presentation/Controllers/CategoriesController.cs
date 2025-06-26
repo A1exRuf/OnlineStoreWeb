@@ -30,7 +30,7 @@ public class CategoriesController : ApiController
         CancellationToken cancellationToken)
     {
         var query = new GetCategoryByIdQuery(id);
-        var result = await Sender.Send(query);
+        var result = await Sender.Send(query, cancellationToken);
 
         return Ok(result);
     }
@@ -41,7 +41,7 @@ public class CategoriesController : ApiController
         [FromBody] CreateCategoryCommand command, 
         CancellationToken cancellationToken)
     {
-        var result = await Sender.Send(command);
+        var result = await Sender.Send(command, cancellationToken);
 
         return Created(string.Empty, result); // Insert URI!!!
     }
@@ -58,7 +58,7 @@ public class CategoriesController : ApiController
             request.Name, 
             request.ParentCategoryId);
 
-        await Sender.Send(command);
+        await Sender.Send(command, cancellationToken);
 
         return Ok();
     }
@@ -71,7 +71,7 @@ public class CategoriesController : ApiController
     {
         var command = new DeleteCategoryCommand(id);
 
-        await Sender.Send(command);
+        await Sender.Send(command, cancellationToken);
 
         return NoContent();
     }

@@ -12,6 +12,8 @@ public class ProductFilter : IFilter<Product>
     public decimal? MaxPrice { get; set; }
     public bool? InStockOnly { get; set; }
 
+    public int? StockQuantity {  get; set; }
+
     public IQueryable<Product> ApplyFilter(IQueryable<Product> query)
     {
         if (Id != null)
@@ -42,6 +44,11 @@ public class ProductFilter : IFilter<Product>
         if (InStockOnly != null)
         {
             query = query.Where(x => x.StockQuantity > 0);
+        }
+
+        if (StockQuantity != null)
+        {
+            query = query.Where(x => x.StockQuantity >= StockQuantity);
         }
 
         return query;

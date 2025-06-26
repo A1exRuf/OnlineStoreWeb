@@ -19,7 +19,7 @@ public class UsersController : ApiController
         [FromBody] RegisterCommand command,
         CancellationToken cancellationToken)
     {
-        var result = await Sender.Send(command);
+        var result = await Sender.Send(command, cancellationToken);
 
         return Created(string.Empty, result);
     }
@@ -29,7 +29,7 @@ public class UsersController : ApiController
         [FromBody] LoginCommand command,
         CancellationToken cancellationToken)
     {
-        var result = await Sender.Send(command);
+        var result = await Sender.Send(command, cancellationToken);
 
         return Ok(result);
     }
@@ -39,7 +39,7 @@ public class UsersController : ApiController
         [FromBody] LoginWithRefreshTokenCommand command,
         CancellationToken cancellationToken)
     {
-        var result = await Sender.Send(command);
+        var result = await Sender.Send(command, cancellationToken);
 
         return Ok(result);
     }
@@ -49,7 +49,7 @@ public class UsersController : ApiController
         [FromBody] RequestResetPasswordCommand command,
         CancellationToken cancellationToken)
     {
-        await Sender.Send(command);
+        await Sender.Send(command, cancellationToken);
 
         return Ok();
     }
@@ -59,7 +59,7 @@ public class UsersController : ApiController
         [FromBody] ResetPasswordCommand command,
         CancellationToken cancellationToken)
     {
-        await Sender.Send(command);
+        await Sender.Send(command, cancellationToken);
 
         return Ok();
     }

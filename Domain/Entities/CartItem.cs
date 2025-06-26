@@ -8,11 +8,11 @@ public class CartItem : Entity
     public Product Product { get; private set; }
     public int Quantity { get; set; }
 
-    public CartItem(Guid id, Guid cartId, Guid productId, int quantity) : base(id)
+    public CartItem(Guid cartId, Guid productId, int? quantity)
     {
         CartId = cartId;
         ProductId = productId;
-        Quantity = quantity;
+        Quantity = quantity ?? 1;
     }
 
     public CartItem() { }

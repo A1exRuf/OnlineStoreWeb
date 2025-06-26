@@ -22,7 +22,7 @@ public class ProductsController : ApiController
         [FromQuery] GetProductsQuery query,
         CancellationToken cancellationToken)
     {
-        var result = await Sender.Send(query);
+        var result = await Sender.Send(query, cancellationToken);
 
         return Ok(result);
     }
@@ -33,7 +33,7 @@ public class ProductsController : ApiController
         CancellationToken cancellationToken)
     {
         var query = new GetProductByIdQuery(id);
-        var result = await Sender.Send(query);
+        var result = await Sender.Send(query, cancellationToken);
 
         return Ok(result);
     }
@@ -44,7 +44,7 @@ public class ProductsController : ApiController
         CreateProductCommand command,
         CancellationToken cancellationToken)
     {
-        var result = await Sender.Send(command);
+        var result = await Sender.Send(command, cancellationToken);
 
         return Created(string.Empty, result);
     }
@@ -62,7 +62,7 @@ public class ProductsController : ApiController
             request.AltText,
             request.DisplayOrder);
 
-        await Sender.Send(command);
+        await Sender.Send(command, cancellationToken);
 
         return Ok();
     }
@@ -82,7 +82,7 @@ public class ProductsController : ApiController
             request.StockQuantity,
             request.CategoryId);
 
-        await Sender.Send(command);
+        await Sender.Send(command, cancellationToken);
 
         return Ok();
     }
