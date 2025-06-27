@@ -34,6 +34,7 @@ internal class ExceptionHandlingMiddleware : IMiddleware
         {
             BadRequestException or ValidationException => StatusCodes.Status400BadRequest,
             NotFoundException => StatusCodes.Status404NotFound,
+            UnauthorizedException => StatusCodes.Status401Unauthorized,
             _ => StatusCodes.Status500InternalServerError
         };
 

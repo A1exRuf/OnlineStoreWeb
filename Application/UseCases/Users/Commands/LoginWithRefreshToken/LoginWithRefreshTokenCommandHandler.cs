@@ -29,7 +29,7 @@ public class LoginWithRefreshTokenCommandHandler : ICommandHandler<LoginWithRefr
             filter: new RefreshTokenFilter { Token = request.RefreshToken },
             asNoTracking: false,
             cancellationToken,
-            rt => rt.User);
+            includes: new[] { "User" });
 
         if (refreshToken == null || refreshToken.ExpiresOnUtc < DateTime.UtcNow)
             throw new ExpiredRefreshTokenException();

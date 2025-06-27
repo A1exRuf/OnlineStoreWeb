@@ -2,7 +2,7 @@
 
 namespace Application.Exceptions;
 
-public class InvalidResetTokenException : BadRequestException
+public class InvalidResetTokenException : UnauthorizedException
 {
     public InvalidResetTokenException()
         : base("Invalid reset token") {}

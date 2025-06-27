@@ -17,13 +17,13 @@ public static class QueryableExtensions
 
     public static IQueryable<TEntity> ApplyIncludes<TEntity>(
         this IQueryable<TEntity> query,
-        params Expression<Func<TEntity, object>>[] includes)
+        string[]? includeStrings)
         where TEntity : Entity
     {
-        if (includes == null || !includes.Any())
+        if (includeStrings == null || !includeStrings.Any())
             return query;
 
-        foreach (var include in includes)
+        foreach (var include in includeStrings)
         {
             query = query.Include(include);
         }

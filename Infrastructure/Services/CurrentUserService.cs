@@ -31,6 +31,16 @@ public class CurrentUserService : ICurrentUserService
         }
     }
 
+    public string? Email
+    {
+        get
+        {
+            var email = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.Email)?.Value;
+
+            return email;
+        }
+    }
+
     public UserRole? Role
     {
         get

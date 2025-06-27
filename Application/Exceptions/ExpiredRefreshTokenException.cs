@@ -2,7 +2,7 @@
 
 namespace Application.Exceptions;
 
-public class ExpiredRefreshTokenException : BadRequestException
+public class ExpiredRefreshTokenException : UnauthorizedException
 {
     public ExpiredRefreshTokenException()
         : base("Expired refresh token") { }
