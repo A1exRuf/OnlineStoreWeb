@@ -29,13 +29,12 @@ public interface IRepository<TEntity> where TEntity : Entity
         IFilter<TEntity> filter,
         bool asNoTracking = true,
         CancellationToken cancellationToken = default,
-        params Expression<Func<TEntity, object>>[] includes);
+        string[]? includes = null);
 
     Task<TDto?> GetAsync<TDto>(
         IFilter<TEntity> filter,
         bool asNoTracking = true,
-        CancellationToken cancellationToken = default,
-        params Expression<Func<TEntity, object>>[] includes);
+        CancellationToken cancellationToken = default);
 
     // Get List
     Task<List<TDto>> GetListAsync<TDto>(
@@ -43,8 +42,7 @@ public interface IRepository<TEntity> where TEntity : Entity
         bool asNoTracking = true,
         Expression<Func<TEntity, object>>? orderBy = null,
         bool descending = false,
-        CancellationToken cancellationToken = default,
-        params Expression<Func<TEntity, object>>[] includes);
+        CancellationToken cancellationToken = default);
 
     // Get Paged List
     Task<PagedList<TDto>> GetPagedListAsync<TDto>(
@@ -54,6 +52,5 @@ public interface IRepository<TEntity> where TEntity : Entity
         bool asNoTracking = true,
         Expression<Func<TEntity, object>>? orderBy = null,
         bool descending = false,
-        CancellationToken cancellationToken = default,
-        params Expression<Func<TEntity, object>>[] includes);
+        CancellationToken cancellationToken = default);
 }

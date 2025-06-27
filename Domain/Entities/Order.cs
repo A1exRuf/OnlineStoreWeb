@@ -14,7 +14,7 @@ public class Order : Entity
     public string Address {  get; set; } 
     public List<OrderItem> Items { get; private set; }
 
-    public Order(Guid id, Guid userId, string address) : base(id)
+    public Order(Guid userId, string address)
     {
         UserId = userId;
         OrderDate = DateTime.UtcNow;

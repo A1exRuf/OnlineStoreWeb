@@ -90,6 +90,6 @@ public class ChangeCartItemQuantityCommandHandler : ICommandHandler<ChangeCartIt
             cancellationToken);
 
         if (!inStock)
-            throw new NotEnoughProductInStockException();
+            throw new NotEnoughProductInStockException("product");
     }
 }

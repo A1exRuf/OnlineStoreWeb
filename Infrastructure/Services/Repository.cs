@@ -56,7 +56,7 @@ public class Repository<TEntity> : IRepository<TEntity> where TEntity : Entity
         IFilter<TEntity> filter, 
         bool asNoTracking = true,
         CancellationToken cancellationToken = default,
-        params Expression<Func<TEntity, object>>[] includes)
+        string[]? includes = null)
     {
         return await DbSet
             .ApplyIncludes(includes)
@@ -68,11 +68,9 @@ public class Repository<TEntity> : IRepository<TEntity> where TEntity : Entity
     public async Task<TDto?> GetAsync<TDto>(
         IFilter<TEntity> filter, 
         bool asNoTracking = true, 
-        CancellationToken cancellationToken = default,
-        params Expression<Func<TEntity, object>>[] includes)
+        CancellationToken cancellationToken = default)
     {
         return await DbSet
-            .ApplyIncludes(includes)
             .ApplyFilter(filter)
             .ApplyAsNoTracking(asNoTracking)
             .ProjectToType<TDto>()
@@ -85,11 +83,9 @@ public class Repository<TEntity> : IRepository<TEntity> where TEntity : Entity
         bool asNoTracking = true, 
         Expression<Func<TEntity, object>>? orderBy = null, 
         bool descending = false, 
-        CancellationToken cancellationToken = default,
-        params Expression<Func<TEntity, object>>[] includes)
+        CancellationToken cancellationToken = default)
     {
         return await DbSet
-            .ApplyIncludes(includes)
             .ApplyFilter(filter)
             .SortQuery(orderBy, descending)
             .ApplyAsNoTracking(asNoTracking)
@@ -105,11 +101,9 @@ public class Repository<TEntity> : IRepository<TEntity> where TEntity : Entity
         bool asNoTracking = true, 
         Expression<Func<TEntity, object>>? orderBy = null, 
         bool descending = false, 
-        CancellationToken cancellationToken = default,
-        params Expression<Func<TEntity, object>>[] includes)
+        CancellationToken cancellationToken = default)
     {
         var query = DbSet
-            .ApplyIncludes(includes)
             .ApplyFilter(filter)
             .SortQuery(orderBy, descending)
             .ApplyAsNoTracking(asNoTracking);

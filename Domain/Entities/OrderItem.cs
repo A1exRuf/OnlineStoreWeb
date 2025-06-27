@@ -9,7 +9,7 @@ public class OrderItem : Entity
     public int Quantity { get; set; }
     public decimal UnitPrice { get; set; }
 
-    public OrderItem(Guid id, Guid orderId, Guid productId, int quantity, decimal unitPrice) : base(id)
+    public OrderItem(Guid orderId, Guid productId, int quantity, decimal unitPrice)
     { 
         OrderId = orderId;
         ProductId = productId;

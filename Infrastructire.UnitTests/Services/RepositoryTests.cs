@@ -26,7 +26,7 @@ public class RepositoryTests
     public async Task AddAsync_Should_Add_Entity()
     {
         // Arrange
-        var user = new User(Guid.NewGuid(), "test@example.com", "hashedPass", UserRole.Customer);
+        var user = new User("test@example.com", "hashedPass", UserRole.Customer);
 
         // Act
         await _repository.AddAsync(user);
@@ -43,7 +43,7 @@ public class RepositoryTests
     public async Task Update_Should_Update_Entity()
     {
         // Arrange
-        var user = new User(Guid.NewGuid(), "old@email.com", "hash1", UserRole.Customer);
+        var user = new User("old@email.com", "hash1", UserRole.Customer);
         await _repository.AddAsync(user);
         await _unitOfWork.SaveChangesAsync();
 
@@ -61,7 +61,7 @@ public class RepositoryTests
     public async Task ExistsAsync_Should_Return_True_When_EntityExists()
     {
         // Arrange
-        var user = new User(Guid.NewGuid(), "exists@example.com", "hashedPass", UserRole.Customer);
+        var user = new User("exists@example.com", "hashedPass", UserRole.Customer);
         await _repository.AddAsync(user);
         await _unitOfWork.SaveChangesAsync();
 
@@ -78,7 +78,7 @@ public class RepositoryTests
     public async Task GetAsync_Should_Return_Entity_By_Filter()
     {
         // Arrange
-        var user = new User(Guid.NewGuid(), "get@example.com", "hashedPass", UserRole.Customer);
+        var user = new User("get@example.com", "hashedPass", UserRole.Customer);
         await _repository.AddAsync(user);
         await _unitOfWork.SaveChangesAsync();
 
@@ -96,7 +96,7 @@ public class RepositoryTests
     public async Task GetAsync_Should_Return_Projected_Dto()
     {
         // Arrange
-        var user = new User(Guid.NewGuid(), "get@test.com", "hash", UserRole.Admin);
+        var user = new User("get@test.com", "hash", UserRole.Admin);
         await _repository.AddAsync(user);
         await _unitOfWork.SaveChangesAsync();
 
@@ -116,8 +116,8 @@ public class RepositoryTests
         // Arrange
         var users = new[]
         {
-            new User(Guid.NewGuid(), "list1@test.com", "hash", UserRole.Admin),
-            new User(Guid.NewGuid(), "list2@test.com", "hash", UserRole.Customer)
+            new User("list1@test.com", "hash", UserRole.Admin),
+            new User("list2@test.com", "hash", UserRole.Customer)
         };
         foreach (var u in users)
             await _repository.AddAsync(u);
@@ -143,7 +143,7 @@ public class RepositoryTests
         // Arrange
         for (int i = 1; i <= 10; i++)
         {
-            var user = new User(Guid.NewGuid(), $"paged{i}@test.com", "hash", UserRole.Customer);
+            var user = new User($"paged{i}@test.com", "hash", UserRole.Customer);
             await _repository.AddAsync(user);
         }
         await _unitOfWork.SaveChangesAsync();

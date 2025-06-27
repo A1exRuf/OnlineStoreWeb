@@ -1,8 +1,9 @@
-﻿using Domain.Exceptions.Base;
+﻿using Domain.Entities;
+using Domain.Exceptions.Base;
 
 namespace Application.Exceptions;
 
-public class NotEnoughProductInStockException() 
-    : BadRequestException($"You cannot take more items than are in stock")
+public class NotEnoughProductInStockException(string name) 
+    : BadRequestException($"Not enough {name} in stock")
 {
 }

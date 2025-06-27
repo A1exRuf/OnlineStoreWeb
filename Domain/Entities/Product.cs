@@ -32,8 +32,9 @@ public class Product : Entity
 
     public Product() { }
 
-    public void IncrementPurchaseCount(int quantity)
+    public void ApplyPurchase(int quantity)
     {
+        StockQuantity -= quantity;
         PurchaseCount += quantity;
     }
 }
