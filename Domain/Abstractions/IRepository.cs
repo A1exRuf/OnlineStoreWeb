@@ -49,6 +49,7 @@ public interface IRepository<TEntity> where TEntity : Entity
         int page,
         int pageSize,
         IFilter<TEntity> filter,
+        ISearch<TEntity>? search = null,
         bool asNoTracking = true,
         Expression<Func<TEntity, object>>? orderBy = null,
         bool descending = false,

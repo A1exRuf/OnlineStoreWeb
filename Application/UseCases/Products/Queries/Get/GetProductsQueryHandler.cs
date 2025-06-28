@@ -1,4 +1,5 @@
-﻿using Application.Abstractions.Messaging;
+﻿using Application.Abstractions;
+using Application.Abstractions.Messaging;
 using Application.Enums;
 using Application.Filters;
 using Domain.Abstractions;
@@ -11,10 +12,14 @@ namespace Application.UseCases.Products.Queries.Get;
 public class GetProductsQueryHandler : IQueryHandler<GetProductsQuery, PagedList<GetProductsResponse>>
 {
     private readonly IRepository<Product> _productRepository;
+    private readonly ISearchFactory _searchFactory;
 
-    public GetProductsQueryHandler(IRepository<Product> productRepository)
+    public GetProductsQueryHandler(
+        IRepository<Product> productRepository,
+        ISearchFactory searchFactory)
     {
         _productRepository = productRepository;
+        _searchFactory = searchFactory;
     }
 
     public async Task<PagedList<GetProductsResponse>> Handle(GetProductsQuery request, CancellationToken cancellationToken)
@@ -29,6 +34,7 @@ public class GetProductsQueryHandler : IQueryHandler<GetProductsQuery, PagedList
                 MaxPrice = request.MaxPrice,
                 InStockOnly = request.InStock
             },
+            search: _searchFactory.CreateSearch<Product>(request.SearchTerm),
             orderBy: SelectSortExpression(request),
             descending: request.descending ?? false,
             cancellationToken: cancellationToken);

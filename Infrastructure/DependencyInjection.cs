@@ -35,6 +35,7 @@ public static class DependencyInjection
         services.AddScoped<ITokenProvider, TokenProvider>();
         services.AddScoped<ICurrentUserService, CurrentUserService>();
         services.AddScoped<IGuestCartService, GuestCartService>();
+        services.AddScoped<ISearchFactory, SearchFactory>();
 
         return services;
     }

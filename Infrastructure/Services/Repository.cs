@@ -97,7 +97,8 @@ public class Repository<TEntity> : IRepository<TEntity> where TEntity : Entity
     public async Task<PagedList<TDto>> GetPagedListAsync<TDto>(
         int page, 
         int pageSize, 
-        IFilter<TEntity> filter, 
+        IFilter<TEntity> filter,
+        ISearch<TEntity>? search = null,
         bool asNoTracking = true, 
         Expression<Func<TEntity, object>>? orderBy = null, 
         bool descending = false, 
@@ -105,6 +106,7 @@ public class Repository<TEntity> : IRepository<TEntity> where TEntity : Entity
     {
         var query = DbSet
             .ApplyFilter(filter)
+            .ApplySearch(search)
             .SortQuery(orderBy, descending)
             .ApplyAsNoTracking(asNoTracking);
 

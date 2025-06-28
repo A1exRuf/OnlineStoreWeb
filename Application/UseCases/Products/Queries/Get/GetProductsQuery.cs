@@ -5,7 +5,8 @@ using Domain.Common;
 namespace Application.UseCases.Products.Queries.Get;
 
 public record GetProductsQuery(
-    Guid CategoryId,
+    string? SearchTerm,
+    Guid? CategoryId,
     decimal? MinPrice,
     decimal? MaxPrice,
     bool? InStock,
