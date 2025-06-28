@@ -33,7 +33,10 @@ internal class ProductConfiguration : IEntityTypeConfiguration<Product>
             .OnDelete(DeleteBehavior.Cascade);
 
         // Indexes
-        builder.HasIndex(p => p.Name);
+        builder.HasIndex(p => new { p.Name, p.Description })
+            .HasMethod("GIN")
+            .IsTsVectorExpressionIndex("english");
+
         builder.HasIndex(p => p.Price);
         builder.HasIndex(p => p.StockQuantity);
         builder.HasIndex(p => p.CategoryId);

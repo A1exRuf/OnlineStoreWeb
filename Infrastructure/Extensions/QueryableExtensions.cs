@@ -39,6 +39,14 @@ public static class QueryableExtensions
         return filter.ApplyFilter(query);
     }
 
+    public static IQueryable<TEntity> ApplySearch<TEntity>(
+        this IQueryable<TEntity> query,
+        ISearch<TEntity>? search)
+        where TEntity: Entity
+    {
+        return search == null ? query : search.ApplySearch(query);
+    }
+
     public static IQueryable<TEntity> SortQuery<TEntity>(
         this IQueryable<TEntity> query,
         Expression<Func<TEntity, object>>? orderBy,
