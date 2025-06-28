@@ -6,12 +6,18 @@ namespace Application.Filters;
 
 public class OrderFilter : IFilter<Order>
 {
+    public Guid? Id { get; set; }
     public Guid? UserId { get; set; }
     public bool? OnlyActive { get; set; }
     public bool? OnlyComplited { get; set; }
 
     public IQueryable<Order> ApplyFilter(IQueryable<Order> query)
     {
+        if (Id != null)
+        {
+            query = query.Where(x => x.Id == Id);
+        }
+
         if (UserId != null)
         {
             query = query.Where(x => x.UserId == UserId);
