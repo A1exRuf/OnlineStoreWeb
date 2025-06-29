@@ -82,7 +82,6 @@ public class CachedRepository<TEntity> : IRepository<TEntity> where TEntity : En
 
     public async Task<TDto?> GetAsync<TDto>(
         IFilter<TEntity> filter, 
-        bool asNoTracking = true, 
         CancellationToken cancellationToken = default)
     {
         string key = GetKey<TDto>(filter);
@@ -95,7 +94,7 @@ public class CachedRepository<TEntity> : IRepository<TEntity> where TEntity : En
 
         if (string.IsNullOrEmpty(cachedDto))
         {
-            dto = await _decorated.GetAsync<TDto>(filter, asNoTracking, cancellationToken);
+            dto = await _decorated.GetAsync<TDto>(filter, cancellationToken);
                 
             if (dto == null)
                 return dto;
@@ -116,7 +115,6 @@ public class CachedRepository<TEntity> : IRepository<TEntity> where TEntity : En
 
     public async Task<List<TDto>> GetListAsync<TDto>(
         IFilter<TEntity> filter, 
-        bool asNoTracking = true, 
         Expression<Func<TEntity, object>>? orderBy = null, 
         bool descending = false, 
         CancellationToken cancellationToken = default)
@@ -136,7 +134,6 @@ public class CachedRepository<TEntity> : IRepository<TEntity> where TEntity : En
         {
             list = await _decorated.GetListAsync<TDto>(
                 filter,
-                asNoTracking,
                 orderBy,
                 descending,
                 cancellationToken);
@@ -160,7 +157,6 @@ public class CachedRepository<TEntity> : IRepository<TEntity> where TEntity : En
         int pageSize, 
         IFilter<TEntity> filter,
         ISearch<TEntity>? search = null, 
-        bool asNoTracking = true, 
         Expression<Func<TEntity, object>>? orderBy = null, 
         bool descending = false, 
         CancellationToken cancellationToken = default)
@@ -186,7 +182,6 @@ public class CachedRepository<TEntity> : IRepository<TEntity> where TEntity : En
                 pageSize,
                 filter,
                 search,
-                asNoTracking,
                 orderBy,
                 descending,
                 cancellationToken);

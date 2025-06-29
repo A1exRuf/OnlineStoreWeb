@@ -33,13 +33,11 @@ public interface IRepository<TEntity> where TEntity : Entity
 
     Task<TDto?> GetAsync<TDto>(
         IFilter<TEntity> filter,
-        bool asNoTracking = true,
         CancellationToken cancellationToken = default);
 
     // Get List
     Task<List<TDto>> GetListAsync<TDto>(
         IFilter<TEntity> filter,
-        bool asNoTracking = true,
         Expression<Func<TEntity, object>>? orderBy = null,
         bool descending = false,
         CancellationToken cancellationToken = default);
@@ -50,7 +48,6 @@ public interface IRepository<TEntity> where TEntity : Entity
         int pageSize,
         IFilter<TEntity> filter,
         ISearch<TEntity>? search = null,
-        bool asNoTracking = true,
         Expression<Func<TEntity, object>>? orderBy = null,
         bool descending = false,
         CancellationToken cancellationToken = default);

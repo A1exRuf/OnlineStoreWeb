@@ -33,7 +33,6 @@ public class ResetPasswordCommandHandler : ICommandHandler<ResetPasswordCommand>
         // Check Reset Token
         var userId = await _userRepository.GetAsync<EntityIdDto>(
             filter: new UserFilter { Email = request.Email }, 
-            asNoTracking: true,
             cancellationToken);   
 
         var resetToken = await _resetTokenRepository.GetAsync(
