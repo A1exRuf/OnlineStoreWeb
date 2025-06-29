@@ -35,7 +35,6 @@ public class RequestResetPasswordCommandHandler : ICommandHandler<RequestResetPa
         // Retrieve UserId for token (email existense validated)
         var userId = await _userRepository.GetAsync<EntityIdDto>(
             filter: new UserFilter { Email = request.Email },
-            asNoTracking: true,
             cancellationToken);
 
         // Remove old token and add new one

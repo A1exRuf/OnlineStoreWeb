@@ -67,12 +67,11 @@ public class Repository<TEntity> : IRepository<TEntity> where TEntity : Entity
 
     public async Task<TDto?> GetAsync<TDto>(
         IFilter<TEntity> filter, 
-        bool asNoTracking = true, 
         CancellationToken cancellationToken = default)
     {
         return await DbSet
             .ApplyFilter(filter)
-            .ApplyAsNoTracking(asNoTracking)
+            .AsNoTracking()
             .ProjectToType<TDto>()
             .FirstOrDefaultAsync(cancellationToken);
     }
@@ -80,7 +79,6 @@ public class Repository<TEntity> : IRepository<TEntity> where TEntity : Entity
     // Get List
     public async Task<List<TDto>> GetListAsync<TDto>(
         IFilter<TEntity> filter, 
-        bool asNoTracking = true, 
         Expression<Func<TEntity, object>>? orderBy = null, 
         bool descending = false, 
         CancellationToken cancellationToken = default)
@@ -88,7 +86,7 @@ public class Repository<TEntity> : IRepository<TEntity> where TEntity : Entity
         return await DbSet
             .ApplyFilter(filter)
             .SortQuery(orderBy, descending)
-            .ApplyAsNoTracking(asNoTracking)
+            .AsNoTracking()
             .ProjectToType<TDto>()
             .ToListAsync(cancellationToken);
     }
@@ -99,7 +97,6 @@ public class Repository<TEntity> : IRepository<TEntity> where TEntity : Entity
         int pageSize, 
         IFilter<TEntity> filter,
         ISearch<TEntity>? search = null,
-        bool asNoTracking = true, 
         Expression<Func<TEntity, object>>? orderBy = null, 
         bool descending = false, 
         CancellationToken cancellationToken = default)
@@ -108,7 +105,7 @@ public class Repository<TEntity> : IRepository<TEntity> where TEntity : Entity
             .ApplyFilter(filter)
             .ApplySearch(search)
             .SortQuery(orderBy, descending)
-            .ApplyAsNoTracking(asNoTracking);
+            .AsNoTracking();
 
         int totalCount = await query.CountAsync(cancellationToken);
 

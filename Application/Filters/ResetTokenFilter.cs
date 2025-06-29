@@ -20,4 +20,10 @@ public class ResetTokenFilter : IFilter<ResetToken>
         }
         return query;
     }
+
+    public string GetCacheKey()
+    {
+        return $"{nameof(UserId)}={UserId?.ToString() ?? "null"}:" +
+            $"{nameof(Token)}={Token ?? "null"}";
+    }
 }

@@ -20,19 +20,13 @@ public class GetCategoriesQueryHandler : IQueryHandler<GetCategoriesQuery, List<
 
     public async Task<List<CategoryWithChildrenDto>> Handle(GetCategoriesQuery request, CancellationToken cancellationToken)
     {
-        var roots = await _categoryRepository.GetListAsync<CategoryWithChildrenDto>(
-            filter: new CategoryFilter { OnlyRoots = true },
+        var categories = await _categoryRepository.GetListAsync<CategoryWithChildrenDto>(
+            filter: new CategoryFilter {},
             orderBy: x => x.Name,
             cancellationToken: cancellationToken);
 
-        var result = new List<CategoryWithChildrenDto>();
+        var response = _categoryTreeBuilder.BuildForest(categories);
 
-        foreach (var root in roots)
-        {
-            var tree = await _categoryTreeBuilder.BuildTreeAsync(root, cancellationToken);
-            result.Add(tree);
-        }
-
-        return result;
+        return response;
     }
 }

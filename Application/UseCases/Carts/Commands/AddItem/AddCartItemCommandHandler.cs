@@ -39,7 +39,6 @@ public class AddCartItemCommandHandler : ICommandHandler<AddCartItemCommand, Gui
         {
             var cart = await _cartRepository.GetAsync<EntityIdDto>(
                 filter: new CartFilter { UserId = userId },
-                asNoTracking: true,
                 cancellationToken);
 
             var cartItem = new CartItem(

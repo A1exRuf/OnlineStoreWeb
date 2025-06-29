@@ -8,6 +8,7 @@ public static class MappingConfig
     {
         CartMappingConfig.Configure();
         OrderMappingConfig.Configure();
+        CategoryMappingConfig.Configure();
 
         var config = TypeAdapterConfig.GlobalSettings;
 

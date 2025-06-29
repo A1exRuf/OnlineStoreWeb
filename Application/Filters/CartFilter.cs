@@ -16,4 +16,9 @@ public class CartFilter : IFilter<Cart>
 
         return query;
     }
+
+    public string GetCacheKey()
+    {
+        return $"{nameof(UserId)}={UserId?.ToString() ?? "null"}";
+    }
 }

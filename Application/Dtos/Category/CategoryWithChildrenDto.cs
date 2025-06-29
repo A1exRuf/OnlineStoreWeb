@@ -3,4 +3,7 @@
 public record CategoryWithChildrenDto(
     Guid Id,
     string Name,
-    List<CategoryWithChildrenDto> SubCategories);
+    Guid? ParentCategoryId)
+{
+    public List<CategoryWithChildrenDto> SubCategories { get; init; } = [];
+}

@@ -16,4 +16,9 @@ public class ProductImageFilter : IFilter<ProductImage>
 
         return query;
     }
+
+    public string GetCacheKey()
+    {
+        return $"{nameof(Id)}={Id?.ToString() ?? "null"}";
+    }
 }

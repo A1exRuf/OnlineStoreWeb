@@ -53,4 +53,15 @@ public class ProductFilter : IFilter<Product>
 
         return query;
     }
+
+    public string GetCacheKey()
+    {
+        return $"{nameof(Id)}={Id?.ToString() ?? "null"}:" +
+            $"{nameof(Name)}={Name ?? "null"}:" +
+            $"{nameof(CategoryId)}={CategoryId?.ToString() ?? "null"}:" +
+            $"{nameof(MinPrice)}={MinPrice?.ToString() ?? "null"}:" +
+            $"{nameof(MaxPrice)}={MaxPrice?.ToString() ?? "null"}:" +
+            $"{nameof(InStockOnly)}={InStockOnly?.ToString() ?? "null"}:" +
+            $"{nameof(StockQuantity)}={StockQuantity?.ToString() ?? "null"}";
+    }
 }

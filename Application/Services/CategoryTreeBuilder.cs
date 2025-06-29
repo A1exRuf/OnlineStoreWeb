@@ -1,35 +1,45 @@
 ﻿using Application.Abstractions;
 using Application.Dtos.Category;
-using Application.Filters;
-using Domain.Abstractions;
-using Domain.Entities;
 
 namespace Application.Services;
 
 public class CategoryTreeBuilder : ICategoryTreeBuilder
 {
-    private readonly IRepository<Category> _categoryRepository;
-
-    public CategoryTreeBuilder(IRepository<Category> categoryRepository)
-    {
-        _categoryRepository = categoryRepository;
-    }
-
-    public async Task<CategoryWithChildrenDto> BuildTreeAsync(
+    public CategoryWithChildrenDto BuildTree(
         CategoryWithChildrenDto root, 
-        CancellationToken cancellationToken)
+        List<CategoryWithChildrenDto> flatList)
     {
-        var children = await _categoryRepository.GetListAsync<CategoryWithChildrenDto>(
-            filter: new CategoryFilter { ParentCategoryId = root.Id },
-            cancellationToken: cancellationToken
-        );
+        var lookup = flatList.ToDictionary(x => x.Id);
 
-        var subTrees = new List<CategoryWithChildrenDto>();
-        foreach (var child in children)
+        foreach (var category in flatList)
         {
-            subTrees.Add(await BuildTreeAsync(child, cancellationToken));
+            if (category.ParentCategoryId != null &&
+                lookup.TryGetValue(category.ParentCategoryId.Value, out var parent))
+            {
+                parent.SubCategories.Add(category);
+            }
         }
 
-        return root with { SubCategories = subTrees };
+        return root;
+    }
+
+    public List<CategoryWithChildrenDto> BuildForest(List<CategoryWithChildrenDto> flatList)
+    {
+        var lookup = flatList.ToDictionary(x => x.Id);
+        var roots = new List<CategoryWithChildrenDto>();
+
+        foreach (var category in flatList)
+        {
+            if (category.ParentCategoryId == null)
+            {
+                roots.Add(category);
+            }
+            else if (lookup.TryGetValue(category.ParentCategoryId.Value, out var parent))
+            {
+                parent.SubCategories.Add(category);
+            }
+        }
+
+        return roots;
     }
 }

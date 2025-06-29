@@ -24,5 +24,11 @@ namespace Application.Filters
 
             return query;
         }
+
+        public string GetCacheKey()
+        {
+            return $"{nameof(Id)}={Id?.ToString() ?? "null"}:" +
+                $"{nameof(Email)}={Email ?? "null"}";
+        }
     }
 }

@@ -23,15 +23,16 @@ public class GetCategoryByIdQueryHandler : IQueryHandler<GetCategoryByIdQuery, C
 
     public async Task<CategoryWithChildrenDto> Handle(GetCategoryByIdQuery request, CancellationToken cancellationToken)
     {
-        var root = await _categoryRepository.GetAsync<CategoryWithChildrenDto>(
-            filter: new CategoryFilter { Id = request.Id },
+        var categories = await _categoryRepository.GetListAsync<CategoryWithChildrenDto>(
+            filter: new CategoryFilter { },
+            orderBy: x => x.Name,
             cancellationToken: cancellationToken);
+
+        var root = categories.FirstOrDefault(x => x.Id == request.Id);
 
         if (root == null)
             throw new NotFoundByIdException<Category>(request.Id);
 
-        var result = await _categoryTreeBuilder.BuildTreeAsync(root, cancellationToken);
-
-        return result;
+        return _categoryTreeBuilder.BuildTree(root, categories);
     }
 }

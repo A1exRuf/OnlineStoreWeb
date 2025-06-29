@@ -16,6 +16,10 @@ public static class DependencyInjection
         services.AddDbContext<ApplicationDbContext>(builder => 
             builder.UseNpgsql(configuration.GetConnectionString("Database")));
         services.AddHttpContextAccessor();
+        services.AddStackExchangeRedisCache(redisOptions =>
+        {
+            redisOptions.Configuration = configuration.GetConnectionString("Cache");
+        });
 
         var blobStorageConnection = configuration.GetConnectionString("BlobStorage");
         var blobStorageOptions = new BlobClientOptions(BlobClientOptions.ServiceVersion.V2019_12_12);
@@ -29,7 +33,9 @@ public static class DependencyInjection
             sp.GetRequiredService<IConnectionMultiplexer>().GetDatabase()
         );
 
-        services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+        services.AddScoped(typeof(Repository<>));
+        services.AddScoped(typeof(IRepository<>), typeof(CachedRepository<>));
+
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<IPasswordHasher, PasswordHasher>();
         services.AddScoped<ITokenProvider, TokenProvider>();
