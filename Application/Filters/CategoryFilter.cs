@@ -28,4 +28,11 @@ public class CategoryFilter : IFilter<Category>
 
         return query;
     }
+
+    public string GetCacheKey()
+    {
+        return $"{nameof(Id)}={Id?.ToString() ?? "null"}:" +
+            $"{nameof(ParentCategoryId)}={ParentCategoryId?.ToString() ?? "null"}:" +
+            $"{nameof(OnlyRoots)}={OnlyRoots?.ToString() ?? "null"}";
+    }
 }

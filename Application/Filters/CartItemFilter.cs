@@ -15,4 +15,9 @@ public class CartItemFilter : IFilter<CartItem>
 
         return query;
     }
+
+    public string GetCacheKey()
+    {
+        return $"{nameof(Id)}={Id?.ToString() ?? "null"}";
+    }
 }

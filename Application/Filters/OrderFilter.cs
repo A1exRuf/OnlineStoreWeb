@@ -35,4 +35,12 @@ public class OrderFilter : IFilter<Order>
 
         return query;
     }
+
+    public string GetCacheKey()
+    {
+        return $"{nameof(Id)}={Id?.ToString() ?? "null"}:" +
+            $"{nameof(UserId)}={UserId?.ToString() ?? "null"}:" +
+            $"{nameof(OnlyActive)}={OnlyActive?.ToString() ?? "null"}:" +
+            $"{nameof(OnlyComplited)}={OnlyComplited?.ToString() ?? "null"}";
+    }
 }

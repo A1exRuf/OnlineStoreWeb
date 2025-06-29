@@ -4,5 +4,9 @@ namespace Application.Abstractions;
 
 public interface ICategoryTreeBuilder
 {
-    Task<CategoryWithChildrenDto> BuildTreeAsync(CategoryWithChildrenDto root, CancellationToken cancellationToken);
+    CategoryWithChildrenDto BuildTree(
+        CategoryWithChildrenDto root, 
+        List<CategoryWithChildrenDto> flatList);
+
+    List<CategoryWithChildrenDto> BuildForest(List<CategoryWithChildrenDto> flatList);
 }
