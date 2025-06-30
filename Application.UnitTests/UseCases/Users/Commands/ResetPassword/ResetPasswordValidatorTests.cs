@@ -1,16 +1,21 @@
 ﻿using Application.UseCases.Users.Commands.ResetPassword;
+using Domain.Abstractions;
+using Domain.Entities;
 using FluentValidation;
 using FluentValidation.TestHelper;
+using Moq;
 
 namespace Application.UnitTests.UseCases.Users.Commands.ResetPassword;
 
 public class ResetPasswordValidatorTests : AbstractValidator<ResetPasswordCommand>
 {
+    private readonly Mock<IRepository<User>> _repositoryMock;
     private readonly ResetPasswordValidator _validator;
 
     public ResetPasswordValidatorTests()
     {
-        _validator = new ResetPasswordValidator();
+        _repositoryMock = new Mock<IRepository<User>>();
+        _validator = new ResetPasswordValidator(_repositoryMock.Object);
     }
 
     [Theory]

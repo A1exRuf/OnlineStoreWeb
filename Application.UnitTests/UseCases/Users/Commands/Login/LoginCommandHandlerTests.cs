@@ -38,16 +38,16 @@ public class LoginCommandHandlerTests
     public async Task Handle_Should_ReturnLoginResponse_When_CredentialsAreValid()
     {
         // Arrange
-        var userId = Guid.NewGuid();
         var email = "test@example.com";
         var password = "password123";
         var passwordHash = "hashedPassword";
         var accessToken = "access-token";
         var refreshTokenValue = "refresh-token";
 
-        var user = new User(userId, email, passwordHash, UserRole.Customer);
+        var user = new User(email, passwordHash, UserRole.Customer);
 
-        _userRepositoryMock.Setup(r => r.GetAsync(It.IsAny<UserFilter>(), true, It.IsAny<CancellationToken>()))
+
+        _userRepositoryMock.Setup(r => r.GetAsync(It.IsAny<UserFilter>(), true, It.IsAny<CancellationToken>(), null))
             .ReturnsAsync(user);
 
         _passwordHasherMock.Setup(p => p.VerifyPassword(passwordHash, password)).Returns(true);
@@ -74,7 +74,7 @@ public class LoginCommandHandlerTests
         // Arrange
         var command = new LoginCommand("notfound@example.com", "password");
 
-        _userRepositoryMock.Setup(r => r.GetAsync(It.IsAny<UserFilter>(), true, It.IsAny<CancellationToken>()))
+        _userRepositoryMock.Setup(r => r.GetAsync(It.IsAny<UserFilter>(), true, It.IsAny<CancellationToken>(), null))
             .ReturnsAsync((User?)null);
 
         // Act & Assert
@@ -89,9 +89,9 @@ public class LoginCommandHandlerTests
         var email = "test@example.com";
         var correctHash = "hashedPassword";
         var wrongPassword = "wrong-password";
-        var user = new User(Guid.NewGuid(), email, correctHash, UserRole.Customer);
+        var user = new User(email, correctHash, UserRole.Customer);
 
-        _userRepositoryMock.Setup(r => r.GetAsync(It.IsAny<UserFilter>(), true, It.IsAny<CancellationToken>()))
+        _userRepositoryMock.Setup(r => r.GetAsync(It.IsAny<UserFilter>(), true, It.IsAny<CancellationToken>(), null))
             .ReturnsAsync(user);
 
         _passwordHasherMock.Setup(p => p.VerifyPassword(correctHash, wrongPassword)).Returns(false);
