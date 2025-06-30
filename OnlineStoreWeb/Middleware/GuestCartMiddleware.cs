@@ -15,7 +15,7 @@ public class GuestCartMiddleware : IMiddleware
     public async Task InvokeAsync(HttpContext context, RequestDelegate next)
     {
         const string cookieName = "guest_cart_id";
-        
+
         if (!context.User.Identity?.IsAuthenticated ?? true)
         {
             if (context.Request.Cookies.TryGetValue(cookieName, out var cartIdstr) &&
@@ -23,7 +23,16 @@ public class GuestCartMiddleware : IMiddleware
             {
                 CreateGuestCartIdCookie(context, cookieName, cartIdstr);
 
-                await _guestCartService.TouchAsync(cartId);
+                var cart = _guestCartService.GetCartAsync(cartId);
+                if (cart != null)
+                {
+                    await _guestCartService.TouchAsync(cartId);
+                }
+                else
+                {
+                    var newCart = new GuestCartDto(cartId, []);
+                    await _guestCartService.SaveCartAsync(newCart);
+                }
             }
             else
             {
@@ -38,8 +47,8 @@ public class GuestCartMiddleware : IMiddleware
     }
 
     private static void CreateGuestCartIdCookie(
-        HttpContext context, 
-        string cookieName, 
+        HttpContext context,
+        string cookieName,
         string newCartId)
     {
         context.Response.Cookies.Append(

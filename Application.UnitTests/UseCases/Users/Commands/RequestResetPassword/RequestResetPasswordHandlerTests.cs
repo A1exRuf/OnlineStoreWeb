@@ -46,7 +46,6 @@ public class RequestResetPasswordHandlerTests
         _userRepositoryMock
             .Setup(x => x.GetAsync<EntityIdDto>(
                 It.IsAny<IFilter<User>>(),
-                true,
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(new EntityIdDto(userId));
 
@@ -78,7 +77,7 @@ public class RequestResetPasswordHandlerTests
 
         // Assert
         _userRepositoryMock.Verify(x => x.GetAsync<EntityIdDto>(
-            It.IsAny<IFilter<User>>(), true, It.IsAny<CancellationToken>()), Times.Once);
+            It.IsAny<IFilter<User>>(), It.IsAny<CancellationToken>()), Times.Once);
 
         _resetTokenRepositoryMock.Verify(x => x.RemoveAsync(
             It.IsAny<IFilter<ResetToken>>(), It.IsAny<CancellationToken>()), Times.Once);

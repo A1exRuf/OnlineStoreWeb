@@ -12,5 +12,5 @@ public record GetProductsQuery(
     bool? InStock,
     ProductSortBy? SortBy,
     bool? descending,
-    int page,
-    int pageSize) : IQuery<PagedList<GetProductsResponse>>;
+    int page = 1,
+    int pageSize = 10) : IQuery<PagedList<GetProductsResponse>>;

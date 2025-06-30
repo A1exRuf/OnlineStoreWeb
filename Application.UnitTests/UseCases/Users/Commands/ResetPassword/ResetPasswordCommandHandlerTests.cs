@@ -47,17 +47,17 @@ public class ResetPasswordCommandHandlerTests
             newPassword);
 
         _userRepoMock
-            .Setup(r => r.GetAsync<EntityIdDto>(It.IsAny<IFilter<User>>(), true, default))
+            .Setup(r => r.GetAsync<EntityIdDto>(It.IsAny<IFilter<User>>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new EntityIdDto(userId));
 
         _tokenRepoMock
-            .Setup(r => r.GetAsync(It.IsAny<IFilter<ResetToken>>(), false, default))
+            .Setup(r => r.GetAsync(It.IsAny<IFilter<ResetToken>>(), false, It.IsAny<CancellationToken>(), null))
             .ReturnsAsync(new ResetToken(Guid.NewGuid(), userId, token));
 
-        var user = new User(userId, email, "old_hash", UserRole.Customer);
+        var user = new User(email, "old_hash", UserRole.Customer);
 
         _userRepoMock
-            .Setup(r => r.GetAsync(It.IsAny<IFilter<User>>(), false, default))
+            .Setup(r => r.GetAsync(It.IsAny<IFilter<User>>(), false, It.IsAny<CancellationToken>(), null))
             .ReturnsAsync(user);
 
         _hasherMock
