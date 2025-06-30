@@ -11,4 +11,10 @@ public class Cart : Entity
         UserId = userId;
         Items = [];
     }
+
+    public Cart(Guid Id, Guid userId) : base(Id)
+    {
+        UserId = userId;
+        Items = [];
+    }
 }

@@ -24,7 +24,7 @@ public class GuestCartMiddleware : IMiddleware
                 CreateGuestCartIdCookie(context, cookieName, cartIdstr);
 
                 var cart = _guestCartService.GetCartAsync(cartId);
-                if (cart == null)
+                if (cart != null)
                 {
                     await _guestCartService.TouchAsync(cartId);
                 }
