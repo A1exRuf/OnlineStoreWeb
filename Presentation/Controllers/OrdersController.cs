@@ -28,12 +28,9 @@ public class OrdersController : ApiController
     [Authorize]
     [HttpGet("completed")]
     public async Task<IActionResult> GetСompleted(
-        [FromRoute] int page,
-        [FromRoute] int pageSize,
+        [FromQuery] GetCompletedOrdersQuery query,
         CancellationToken cancellationToken)
     {
-        var query = new GetCompletedOrdersQuery(page, pageSize);
-
         var result = await Sender.Send(query, cancellationToken);
 
         return Ok(result);
