@@ -4,7 +4,6 @@ using Application.Exceptions;
 using Application.Filters;
 using Domain.Abstractions;
 using Domain.Entities;
-using FluentEmail.Core;
 
 namespace Application.UseCases.Orders.Commands;
 
@@ -14,20 +13,20 @@ public class CreateOrderCommandHandler : ICommandHandler<CreateOrderCommand, Gui
     private readonly IRepository<Cart> _cartRepository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly ICurrentUserService _currentUserService;
-    private readonly IFluentEmail _fluetEmail;
+    private readonly IEmailService _emailService;
 
     public CreateOrderCommandHandler(
         IRepository<Order> orderRepository, 
         IRepository<Cart> cartRepository, 
         IUnitOfWork unitOfWork, 
         ICurrentUserService currentUserService,
-        IFluentEmail fluentEmail)
+        IEmailService emailService)
     {
         _orderRepository = orderRepository;
         _cartRepository = cartRepository;
         _unitOfWork = unitOfWork;
         _currentUserService = currentUserService;
-        _fluetEmail = fluentEmail;
+        _emailService = emailService;
     }
 
     public async Task<Guid> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
@@ -65,11 +64,11 @@ public class CreateOrderCommandHandler : ICommandHandler<CreateOrderCommand, Gui
         var userEmail = _currentUserService.Email
             ?? throw new UserNotAuthenticatedException();
 
-        await _fluetEmail
-            .To(userEmail)
-            .Subject("New order")
-            .Body("Your order has been successfully placed")
-            .SendAsync(cancellationToken);
+        await _emailService.SendEmailAsync(
+            userEmail,
+            "New order",
+            "Your order has been succesfully placed",
+            cancellationToken);
 
         await _unitOfWork.SaveChangesAsync();
 

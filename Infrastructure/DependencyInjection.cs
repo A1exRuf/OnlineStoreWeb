@@ -42,6 +42,11 @@ public static class DependencyInjection
         services.AddScoped<ICurrentUserService, CurrentUserService>();
         services.AddScoped<IGuestCartService, GuestCartService>();
         services.AddScoped<ISearchFactory, SearchFactory>();
+        services.AddScoped<IEmailService, EmailService>();
+
+        services
+                .AddFluentEmail(configuration["Email:SenderEmail"], configuration["Email:Sender"])
+                .AddSmtpSender(configuration["Email:Host"], configuration.GetValue<int>("Email:Port"));
 
         return services;
     }

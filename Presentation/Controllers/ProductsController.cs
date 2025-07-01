@@ -1,4 +1,5 @@
-﻿using Application.UseCases.Products.Commands.AddImage;
+﻿using Application.Dtos.ProductImage;
+using Application.UseCases.Products.Commands.AddImage;
 using Application.UseCases.Products.Commands.Create;
 using Application.UseCases.Products.Commands.Delete;
 using Application.UseCases.Products.Commands.DeleteImage;
@@ -7,6 +8,7 @@ using Application.UseCases.Products.Queries.Get;
 using Application.UseCases.Products.Queries.GetById;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Presentation.Controllers;
@@ -53,14 +55,19 @@ public class ProductsController : ApiController
     [HttpPost("{id}/images")]
     public async Task<IActionResult> AddImage(
         [FromRoute] Guid id,
-        [FromForm] AddProductImageRequest request,
+        IFormFile file,
+        string? altText,
+        int? displayOrder,
         CancellationToken cancellationToken)
     {
+        using var stream = file.OpenReadStream();
+
         var command = new AddProductImageCommand(
             id,
-            request.Image,
-            request.AltText,
-            request.DisplayOrder);
+            stream,
+            file.ContentType,
+            altText,
+            displayOrder);
 
         await Sender.Send(command, cancellationToken);
 

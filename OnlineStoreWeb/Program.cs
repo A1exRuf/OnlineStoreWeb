@@ -15,7 +15,7 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 builder.Services.AddSwaggerGen();
 builder.Services.AddSwaggerJwt();
 builder.Services.AddJwtAuthentication(builder.Configuration);
-builder.Services.AddApplication(builder.Configuration);
+builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddTransient<ExceptionHandlingMiddleware>();
 builder.Services.AddScoped<GuestCartMiddleware>();
