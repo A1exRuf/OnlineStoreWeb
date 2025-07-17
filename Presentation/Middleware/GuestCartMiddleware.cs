@@ -1,7 +1,8 @@
 ﻿using Application.Abstractions;
 using Application.Dtos.Cart;
+using Microsoft.AspNetCore.Http;
 
-namespace OnlineStoreWeb.GuestCartMiddleware;
+namespace Presentation.Middleware;
 
 public class GuestCartMiddleware : IMiddleware
 {

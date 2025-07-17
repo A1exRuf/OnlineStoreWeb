@@ -23,9 +23,7 @@ public class AddProductImageCommandHandler : ICommandHandler<AddProductImageComm
 
     public async Task Handle(AddProductImageCommand request, CancellationToken cancellationToken)
     {
-        using var stream = request.Image.OpenReadStream();
-
-        Guid id = await _blobService.UploadAsync(stream, request.Image.ContentType, cancellationToken);
+        Guid id = await _blobService.UploadAsync(request.Stream, request.ContentType, cancellationToken);
         Uri uri = await _blobService.GetUriAsync(id);
 
         await _productImageRepository.AddAsync(new(
