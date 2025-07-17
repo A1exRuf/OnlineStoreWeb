@@ -1,10 +1,12 @@
 ﻿using Application.Exceptions;
 using Domain.Exceptions.Base;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using System.Text.Json;
 
-namespace OnlineStoreWeb.Middleware;
+namespace Presentation.Middleware;
 
-internal class ExceptionHandlingMiddleware : IMiddleware
+public class ExceptionHandlingMiddleware : IMiddleware
 {
     private readonly ILogger<ExceptionHandlingMiddleware> _logger;
 
