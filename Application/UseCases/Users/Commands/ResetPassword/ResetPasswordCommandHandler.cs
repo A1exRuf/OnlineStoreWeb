@@ -37,7 +37,6 @@ public class ResetPasswordCommandHandler : ICommandHandler<ResetPasswordCommand>
 
         var resetToken = await _resetTokenRepository.GetAsync(
             filter: new ResetTokenFilter { UserId = userId!, Token = request.ResetToken },
-            asNoTracking: false,
             cancellationToken);
 
         if (resetToken == null || resetToken.ExpiresOnUtc < DateTime.UtcNow || resetToken.UserId != userId!)
@@ -46,7 +45,6 @@ public class ResetPasswordCommandHandler : ICommandHandler<ResetPasswordCommand>
         // Change password
         var user = await _userRepository.GetAsync(
             filter: new UserFilter { Id = userId! },
-            asNoTracking: false,
             cancellationToken);
 
         if (user == null)

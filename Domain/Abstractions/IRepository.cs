@@ -6,43 +6,35 @@ namespace Domain.Abstractions;
 
 public interface IRepository<TEntity> where TEntity : Entity
 {
-    // Add
     Task AddAsync(
         TEntity entity, 
         CancellationToken cancellationToken = default);
 
-    // Remove
     Task<int> RemoveAsync(
         IFilter<TEntity> filter,
         CancellationToken cancellationToken = default);
 
-    // Update
     void Update(TEntity entity);
 
-    // Exists
     Task<bool> ExistsAsync(
         IFilter<TEntity> filter,
         CancellationToken cancellationToken = default);
 
-    // Get
     Task<TEntity?> GetAsync(
         IFilter<TEntity> filter,
-        bool asNoTracking = true,
         CancellationToken cancellationToken = default,
-        string[]? includes = null);
+        params Expression<Func<TEntity, object>>[] includes);
 
     Task<TDto?> GetAsync<TDto>(
         IFilter<TEntity> filter,
         CancellationToken cancellationToken = default);
 
-    // Get List
     Task<List<TDto>> GetListAsync<TDto>(
         IFilter<TEntity> filter,
         Expression<Func<TEntity, object>>? orderBy = null,
         bool descending = false,
         CancellationToken cancellationToken = default);
 
-    // Get Paged List
     Task<PagedList<TDto>> GetPagedListAsync<TDto>(
         int page,
         int pageSize,

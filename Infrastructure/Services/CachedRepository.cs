@@ -73,11 +73,10 @@ public class CachedRepository<TEntity> : IRepository<TEntity> where TEntity : En
 
     public async Task<TEntity?> GetAsync(
         IFilter<TEntity> filter, 
-        bool asNoTracking = true, 
         CancellationToken cancellationToken = default, 
-        string[]? includes = null)
+        params Expression<Func<TEntity, object>>[] includes)
     {
-        return await _decorated.GetAsync(filter, asNoTracking, cancellationToken, includes);
+        return await _decorated.GetAsync(filter, cancellationToken, includes);
     }
 
     public async Task<TDto?> GetAsync<TDto>(

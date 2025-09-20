@@ -27,9 +27,8 @@ public class LoginWithRefreshTokenCommandHandler : ICommandHandler<LoginWithRefr
     {
         RefreshToken? refreshToken = await _refreshTokenRepository.GetAsync(
             filter: new RefreshTokenFilter { Token = request.RefreshToken },
-            asNoTracking: false,
             cancellationToken,
-            includes: new[] { "User" });
+            includes: rt => rt.User);
 
         if (refreshToken == null || refreshToken.ExpiresOnUtc < DateTime.UtcNow)
             throw new ExpiredRefreshTokenException();

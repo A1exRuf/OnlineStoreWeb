@@ -37,6 +37,7 @@ public static class DependencyInjection
         services.AddScoped(typeof(IRepository<>), typeof(CachedRepository<>));
 
         services.AddScoped<IUnitOfWork, UnitOfWork>();
+        services.AddScoped<IEntityLoader, EntityLoader>();
         services.AddScoped<IPasswordHasher, PasswordHasher>();
         services.AddScoped<ITokenProvider, TokenProvider>();
         services.AddScoped<ICurrentUserService, CurrentUserService>();
