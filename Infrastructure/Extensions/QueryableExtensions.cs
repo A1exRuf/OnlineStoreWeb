@@ -7,28 +7,15 @@ namespace Infrastructure.Extensions;
 
 public static class QueryableExtensions
 {
-    public static IQueryable<TEntity> ApplyAsNoTracking<TEntity>(
-        this IQueryable<TEntity> query,
-        bool asNoTracking) 
-        where TEntity : Entity
-    {
-        return asNoTracking ? query.AsNoTracking() : query;
-    }
-
     public static IQueryable<TEntity> ApplyIncludes<TEntity>(
         this IQueryable<TEntity> query,
-        string[]? includeStrings)
+        Expression<Func<TEntity, object>>[] includes)
         where TEntity : Entity
     {
-        if (includeStrings == null || !includeStrings.Any())
+        if (includes == null)
             return query;
 
-        foreach (var include in includeStrings)
-        {
-            query = query.Include(include);
-        }
-
-        return query;
+        return includes.Aggregate(query, (current, include) => current.Include(include));
     }
 
     public static IQueryable<TEntity> ApplyFilter<TEntity>(

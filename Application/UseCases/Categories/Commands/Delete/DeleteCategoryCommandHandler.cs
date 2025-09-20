@@ -2,7 +2,6 @@
 using Application.Filters;
 using Domain.Abstractions;
 using Domain.Entities;
-using Domain.Exceptions;
 
 namespace Application.UseCases.Categories.Commands.Delete;
 

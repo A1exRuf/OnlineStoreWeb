@@ -21,7 +21,6 @@ public class UpdateCategoryCommandHandler : ICommandHandler<UpdateCategoryComman
     {
         var category = await _categoryRepository.GetAsync(
             filter: new CategoryFilter { Id = request.Id },
-            asNoTracking: false,
             cancellationToken);
 
         request.Adapt(category);

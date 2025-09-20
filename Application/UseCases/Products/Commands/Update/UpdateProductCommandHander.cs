@@ -22,7 +22,6 @@ public class UpdateProductCommandHander : ICommandHandler<UpdateProductCommand>
     {
         var product = await _productRepository.GetAsync(
             filter: new ProductFilter { Id = request.Id },
-            asNoTracking: false,
             cancellationToken) ?? throw new 
             NotFoundByIdException<Product>(request.Id);
 

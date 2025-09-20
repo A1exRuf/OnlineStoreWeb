@@ -38,7 +38,6 @@ public class ChangeCartItemQuantityCommandHandler : ICommandHandler<ChangeCartIt
         {
             var cartItem = await _cartItemRepository.GetAsync(
                 filter: new CartItemFilter { Id = request.Id },
-                asNoTracking: false,
                 cancellationToken: cancellationToken);
 
             if (cartItem == null)

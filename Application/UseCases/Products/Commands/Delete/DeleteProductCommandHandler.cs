@@ -27,7 +27,7 @@ public class DeleteProductCommandHandler : ICommandHandler<DeleteProductCommand>
         var product = await _productRepository.GetAsync(
             filter: new ProductFilter { Id = request.Id },
             cancellationToken: cancellationToken,
-            includes: new[] {"Images"});
+            includes: p => p.Images);
 
         foreach (var image in product!.Images)
         {

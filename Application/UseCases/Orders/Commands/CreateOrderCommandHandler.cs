@@ -12,6 +12,7 @@ public class CreateOrderCommandHandler : ICommandHandler<CreateOrderCommand, Gui
     private readonly IRepository<Order> _orderRepository;
     private readonly IRepository<Cart> _cartRepository;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IEntityLoader _entityLoader;
     private readonly ICurrentUserService _currentUserService;
     private readonly IEmailService _emailService;
 
@@ -19,11 +20,13 @@ public class CreateOrderCommandHandler : ICommandHandler<CreateOrderCommand, Gui
         IRepository<Order> orderRepository, 
         IRepository<Cart> cartRepository, 
         IUnitOfWork unitOfWork, 
+        IEntityLoader entityLoader,
         ICurrentUserService currentUserService,
         IEmailService emailService)
     {
         _orderRepository = orderRepository;
         _cartRepository = cartRepository;
+        _entityLoader = entityLoader;
         _unitOfWork = unitOfWork;
         _currentUserService = currentUserService;
         _emailService = emailService;
@@ -36,9 +39,13 @@ public class CreateOrderCommandHandler : ICommandHandler<CreateOrderCommand, Gui
 
         var cart = await _cartRepository.GetAsync(
             filter: new CartFilter { UserId = userId },
-            asNoTracking: false,
             cancellationToken,
-            includes: new[] { "Items.Product" });
+            includes: c => c.Items);
+
+        await _entityLoader.LoadAsync(
+            cart!.Items, 
+            i => i.Product, 
+            cancellationToken);
 
         var order = new Order(userId, request.Address);
 
