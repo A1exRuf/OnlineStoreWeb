@@ -40,7 +40,7 @@ public class RequestResetPasswordCommandHandler : ICommandHandler<RequestResetPa
         string token = _tokenProvider.GenerateResetToken();
         ResetToken resetToken = new(
            Guid.NewGuid(),
-           userId.Id,
+           userId!.Id,
            token);
 
         await _resetTokenRepository.RemoveAsync(

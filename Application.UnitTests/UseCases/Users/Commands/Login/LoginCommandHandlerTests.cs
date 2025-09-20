@@ -47,7 +47,9 @@ public class LoginCommandHandlerTests
         var user = new User(email, passwordHash, UserRole.Customer);
 
 
-        _userRepositoryMock.Setup(r => r.GetAsync(It.IsAny<UserFilter>(), true, It.IsAny<CancellationToken>(), null))
+        _userRepositoryMock.Setup(r => r.GetAsync(
+            It.IsAny<UserFilter>(), 
+            It.IsAny<CancellationToken>()))
             .ReturnsAsync(user);
 
         _passwordHasherMock.Setup(p => p.VerifyPassword(passwordHash, password)).Returns(true);
@@ -74,7 +76,9 @@ public class LoginCommandHandlerTests
         // Arrange
         var command = new LoginCommand("notfound@example.com", "password");
 
-        _userRepositoryMock.Setup(r => r.GetAsync(It.IsAny<UserFilter>(), true, It.IsAny<CancellationToken>(), null))
+        _userRepositoryMock.Setup(r => r.GetAsync(
+            It.IsAny<UserFilter>(), 
+            It.IsAny<CancellationToken>()))
             .ReturnsAsync((User?)null);
 
         // Act & Assert
@@ -91,7 +95,9 @@ public class LoginCommandHandlerTests
         var wrongPassword = "wrong-password";
         var user = new User(email, correctHash, UserRole.Customer);
 
-        _userRepositoryMock.Setup(r => r.GetAsync(It.IsAny<UserFilter>(), true, It.IsAny<CancellationToken>(), null))
+        _userRepositoryMock.Setup(r => r.GetAsync(
+            It.IsAny<UserFilter>(),
+            It.IsAny<CancellationToken>()))
             .ReturnsAsync(user);
 
         _passwordHasherMock.Setup(p => p.VerifyPassword(correctHash, wrongPassword)).Returns(false);

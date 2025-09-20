@@ -42,9 +42,8 @@ public class LoginWithRefreshTokenCommandHandlerTests
         _refreshTokenRepositoryMock
             .Setup(r => r.GetAsync(
                 It.IsAny<IFilter<RefreshToken>>(),
-                false,
                 It.IsAny<CancellationToken>(),
-                new[] { "User" }))
+                rt => rt.User))
             .ReturnsAsync(refreshToken);
 
         _tokenProviderMock
@@ -83,9 +82,8 @@ public class LoginWithRefreshTokenCommandHandlerTests
         _refreshTokenRepositoryMock
             .Setup(r => r.GetAsync(
                 It.IsAny<IFilter<RefreshToken>>(),
-                false,
                 It.IsAny<CancellationToken>(),
-                new[] { "User" }))
+                rt => rt.User))
             .ReturnsAsync(refreshToken);
 
         // Act & Assert
@@ -100,9 +98,8 @@ public class LoginWithRefreshTokenCommandHandlerTests
         _refreshTokenRepositoryMock
             .Setup(r => r.GetAsync(
                 It.IsAny<IFilter<RefreshToken>>(),
-                false,
                 It.IsAny<CancellationToken>(),
-                new[] { "User" }))
+                rt => rt.User))
             .ReturnsAsync((RefreshToken?)null);
 
         // Act & Assert
