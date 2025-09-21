@@ -6,6 +6,7 @@ using Application.Filters;
 using Domain.Abstractions;
 using Domain.Entities;
 using Domain.Exceptions;
+using Mapster;
 
 namespace Application.UseCases.Carts.Commands.AddItem;
 
@@ -35,40 +36,43 @@ public class AddCartItemCommandHandler : ICommandHandler<AddCartItemCommand, Gui
     {
         var userId = _currentUserService.UserId;
 
-        if (userId.HasValue) // For customers
-        {
-            var cart = await _cartRepository.GetAsync<EntityIdDto>(
-                filter: new CartFilter { UserId = userId },
-                cancellationToken);
+        if (userId.HasValue)
+            return await AddItemToCustomerCart(request, userId, cancellationToken);
+        else
+            return await AddItemToGuestCart(request);
+    }
 
-            var cartItem = new CartItem(
-                cart!.Id,
-                request.ProductId,
-                request.Quantity);
+    private async Task<Guid> AddItemToGuestCart(AddCartItemCommand request)
+    {
+        var cartId = _currentUserService.GuestCartId;
 
-            await _cartItemRepository.AddAsync(cartItem);
+        var cart = await _guestCartService.GetCartAsync(cartId)
+            ?? throw new NotFoundByIdException<Cart>(cartId);
 
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
+        var cartItem = new GuestCartItemDto(
+            cartId,
+            request.ProductId,
+            request.Quantity);
 
-            return cart.Id;
-        }
-        else // For guests
-        {
-            var cartId = _currentUserService.GuestCartId;
+        cart.Items.Add(cartItem);
 
-            var cart = await _guestCartService.GetCartAsync(cartId)
-                ?? throw new NotFoundByIdException<Cart>(cartId);
+        await _guestCartService.SaveCartAsync(cart);
 
-            var cartItem = new GuestCartItemDto(
-                cartId,
-                request.ProductId,
-                request.Quantity);
+        return cart.Id;
+    }
 
-            cart.Items.Add(cartItem);
+    private async Task<Guid> AddItemToCustomerCart(AddCartItemCommand request, Guid? userId, CancellationToken cancellationToken)
+    {
+        var cart = await _cartRepository.GetAsync<EntityIdDto>(
+            filter: new CartFilter { UserId = userId },
+            cancellationToken);
 
-            await _guestCartService.SaveCartAsync(cart);
+        var cartItem = request.Adapt<CartItem>();
 
-            return cart.Id;
-        }
+        await _cartItemRepository.AddAsync(cartItem);
+
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+        return cart!.Id;
     }
 }

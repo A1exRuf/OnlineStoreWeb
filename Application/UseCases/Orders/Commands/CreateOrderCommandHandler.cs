@@ -4,6 +4,7 @@ using Application.Exceptions;
 using Application.Filters;
 using Domain.Abstractions;
 using Domain.Entities;
+using Domain.Exceptions;
 
 namespace Application.UseCases.Orders.Commands;
 
@@ -37,21 +38,42 @@ public class CreateOrderCommandHandler : ICommandHandler<CreateOrderCommand, Gui
         var userId = _currentUserService.UserId
             ?? throw new UserNotAuthenticatedException();
 
+        Cart cart = await GetCartWithItemsById(userId, cancellationToken);
+
+        Order order = await CreateOrder(request, userId, cart, cancellationToken);
+
+        ClearCart(cart);
+
+        await _unitOfWork.SaveChangesAsync();
+
+        await SendEmail(cancellationToken);
+
+        return order.Id;
+    }
+
+    private async Task<Cart> GetCartWithItemsById(Guid userId, CancellationToken cancellationToken)
+    {
         var cart = await _cartRepository.GetAsync(
             filter: new CartFilter { UserId = userId },
             cancellationToken,
-            includes: c => c.Items);
+            includes: c => c.Items)
+            ?? throw new NotFoundByIdException<Cart>(userId);
 
         await _entityLoader.LoadAsync(
-            cart!.Items, 
-            i => i.Product, 
+            cart.Items,
+            i => i.Product,
             cancellationToken);
 
+        return cart;
+    }
+
+    private async Task<Order> CreateOrder(CreateOrderCommand request, Guid userId, Cart cart, CancellationToken cancellationToken)
+    {
         var order = new Order(userId, request.Address);
 
-        foreach (var item in cart!.Items) 
-        { 
-            if(item.Product.StockQuantity < item.Quantity)
+        foreach (var item in cart.Items)
+        {
+            if (item.Product.StockQuantity < item.Quantity)
                 throw new NotEnoughProductInStockException(item.Product.Name);
 
             order.Items.Add(new OrderItem(
@@ -63,11 +85,18 @@ public class CreateOrderCommandHandler : ICommandHandler<CreateOrderCommand, Gui
             item.Product.ApplyPurchase(item.Quantity);
         }
 
+        await _orderRepository.AddAsync(order, cancellationToken);
+        return order;
+    }
+
+    private void ClearCart(Cart cart)
+    {
         cart.Items.Clear();
         _cartRepository.Update(cart);
+    }
 
-        await _orderRepository.AddAsync(order, cancellationToken);
-
+    private async Task SendEmail(CancellationToken cancellationToken)
+    {
         var userEmail = _currentUserService.Email
             ?? throw new UserNotAuthenticatedException();
 
@@ -76,9 +105,5 @@ public class CreateOrderCommandHandler : ICommandHandler<CreateOrderCommand, Gui
             "New order",
             "Your order has been succesfully placed",
             cancellationToken);
-
-        await _unitOfWork.SaveChangesAsync();
-
-        return order.Id;
     }
 }   

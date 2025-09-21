@@ -19,12 +19,8 @@ public class GetProductByIdQueryHandler : IQueryHandler<GetProductByIdQuery, Get
     {
         var product = await _productRepository.GetAsync<GetProductsByIdResponse>(
             filter: new ProductFilter { Id = request.Id },
-            cancellationToken: cancellationToken);
-        
-        if (product == null)
-        {
-            throw new NotFoundByIdException<Product>(request.Id);
-        }
+            cancellationToken: cancellationToken) 
+        ?? throw new NotFoundByIdException<Product>(request.Id);
 
         return product;
     }

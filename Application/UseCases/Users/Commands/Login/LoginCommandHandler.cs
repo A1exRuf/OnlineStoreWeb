@@ -31,36 +31,43 @@ public class LoginCommandHandler : ICommandHandler<LoginCommand, LoginResponse>
 
     public async Task<LoginResponse> Handle(LoginCommand request, CancellationToken cancellationToken)
     {
-        // User verification
+        User user = await GetAndVerificateUser(request, cancellationToken);
 
-        var user = await  _userRepository.GetAsync(
+        LoginResponse response = await GenerateTokens(user, cancellationToken);
+
+        return response;
+    }
+
+    private async Task<User> GetAndVerificateUser(LoginCommand request, CancellationToken cancellationToken)
+    {
+        var user = await _userRepository.GetAsync(
             filter: new UserFilter { Email = request.Email },
-            cancellationToken: cancellationToken);
-
-        if (user == null) 
-            throw new InvalidEmailOrPasswordException();
+            cancellationToken: cancellationToken)
+        ?? throw new InvalidEmailOrPasswordException();
 
         bool passwordVerified = _passwordHasher.VerifyPassword(user.PasswordHash, request.Password);
 
         if (!passwordVerified)
             throw new InvalidEmailOrPasswordException();
 
-        // Building tokens
+        return user;
+    }
+
+    private async Task<LoginResponse> GenerateTokens(User user, CancellationToken cancellationToken)
+    {
         var acсessToken = _tokenProvider.GenerateAccessToken(user);
         var refreshToken = new RefreshToken(
             _tokenProvider.GenerateRefreshToken(),
             user.Id);
 
         await _refreshTokenRepository.RemoveAsync(
-            filter: new RefreshTokenFilter { UserId = user.Id }, 
+            filter: new RefreshTokenFilter { UserId = user.Id },
             cancellationToken);
 
         await _refreshTokenRepository.AddAsync(refreshToken, cancellationToken);
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        var response = new LoginResponse(acсessToken, refreshToken.Token);
-
-        return response;
+        return new LoginResponse(acсessToken, refreshToken.Token);
     }
 }
