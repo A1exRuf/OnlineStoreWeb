@@ -24,6 +24,17 @@ public class DeleteProductCommandHandler : ICommandHandler<DeleteProductCommand>
 
     public async Task Handle(DeleteProductCommand request, CancellationToken cancellationToken)
     {
+        await RemoveImages(request, cancellationToken);
+
+        await _productRepository.RemoveAsync(
+            filter: new ProductFilter { Id = request.Id },
+            cancellationToken);
+
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
+    }
+
+    private async Task RemoveImages(DeleteProductCommand request, CancellationToken cancellationToken)
+    {
         var product = await _productRepository.GetAsync(
             filter: new ProductFilter { Id = request.Id },
             cancellationToken: cancellationToken,
@@ -33,11 +44,5 @@ public class DeleteProductCommandHandler : ICommandHandler<DeleteProductCommand>
         {
             await _blobService.DeleteAsync(image.Id, cancellationToken);
         }
-
-        await _productRepository.RemoveAsync(
-            filter: new ProductFilter { Id = request.Id },
-            cancellationToken);
-
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
     }
 }

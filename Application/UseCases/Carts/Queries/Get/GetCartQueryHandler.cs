@@ -33,37 +33,40 @@ public class GetCartQueryHandler : IQueryHandler<GetCartQuery, CartDto>
     {
         var userId = _currentUserService.UserId;
 
-        if (userId.HasValue) // For customer
+        if (userId.HasValue)
+            return await GetCustomerCart(userId, cancellationToken);
+        else
+            return await GetGuestCart(cancellationToken);
+    }
+
+    private async Task<CartDto?> GetCustomerCart(Guid? userId, CancellationToken cancellationToken)
+    {
+        return await _cartRepository.GetAsync<CartDto>(
+            filter: new CartFilter { UserId = userId },
+            cancellationToken: cancellationToken);
+    }
+
+    private async Task<CartDto> GetGuestCart(CancellationToken cancellationToken)
+    {
+        var cartId = _currentUserService.GuestCartId;
+
+        var guestCart = await _guestCartService.GetCartAsync(cartId)
+            ?? throw new NotFoundByIdException<Cart>(cartId);
+
+        var cart = guestCart.Adapt<CartDto>();
+
+        for (int i = 0; i < guestCart.Items.Count; i++)
         {
-            var cart = await _cartRepository.GetAsync<CartDto>(
-                filter: new CartFilter { UserId = userId },
+            var product = await _productRepository.GetAsync<ProductDto>(
+                filter: new ProductFilter { Id = guestCart.Items[i].ProductId },
                 cancellationToken: cancellationToken);
 
-            return cart;
+            if (product == null)
+                throw new NotFoundByIdException<Product>(guestCart.Items[i].ProductId);
+
+            cart.Items[i] = cart.Items[i] with { Product = product };
         }
-        else // For guest
-        {
-            var cartId = _currentUserService.GuestCartId;
 
-            var guestCart = await _guestCartService.GetCartAsync(cartId)
-                ?? throw new NotFoundByIdException<Cart>(cartId);
-
-            var cart = guestCart.Adapt<CartDto>();
-
-            for (int i = 0; i < guestCart.Items.Count; i++)
-            {
-                var product = await _productRepository.GetAsync<ProductDto>(
-                    filter: new ProductFilter { Id = guestCart.Items[i].ProductId },
-                    cancellationToken: cancellationToken);
-
-                if(product == null)
-                    throw new NotFoundByIdException<Product>(guestCart.Items[i].ProductId);
-
-                cart.Items[i] = cart.Items[i] with { Product = product };
-            }
-
-
-            return cart;
-        }
+        return cart;
     }
 }

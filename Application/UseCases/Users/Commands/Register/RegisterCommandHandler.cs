@@ -1,5 +1,6 @@
 ﻿using Application.Abstractions;
 using Application.Abstractions.Messaging;
+using Application.Dtos.Cart;
 using Domain.Abstractions;
 using Domain.Common;
 using Domain.Entities;
@@ -34,40 +35,51 @@ public class RegisterCommandHandler : ICommandHandler<RegisterCommand, Guid>
 
     public async Task<Guid> Handle(RegisterCommand request, CancellationToken cancellationToken)
     {
-        var hashedPassword = _passwordHasher.HashPassword(request.Password);
+        User user = await CreateNewUser(request, cancellationToken);
 
-        var user = new User(
-            request.Email, 
-            hashedPassword, 
-            Enum.Parse<UserRole>(request.Role, true));
-
-        await _userRepository.AddAsync(user, cancellationToken);
-
-        // Transfer the guest cart, or create a new one
-        var guestCartId = _currentUserService.GuestCartId;
-        var guestCart = await _guestCartService.GetCartAsync(guestCartId);
-
-        Cart cart;
-        if (guestCart != null)
-        {
-            cart = new Cart(guestCart.Id, user.Id);
-
-            foreach (var item in guestCart.Items)
-            {  
-                cart.Items.Add(item.Adapt<CartItem>());
-            }
-
-            await _guestCartService.DeleteCartAsync(guestCartId);
-        }
-        else
-        {
-            cart = new Cart(user.Id);
-        }
-
-        await _cartRepository.AddAsync(cart, cancellationToken);
+        await AssignCartToNewUser(user, cancellationToken);
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         return user.Id;
+    }
+
+    private async Task<User> CreateNewUser(RegisterCommand request, CancellationToken cancellationToken)
+    {
+        var hashedPassword = _passwordHasher.HashPassword(request.Password);
+
+        var user = new User(
+            request.Email,
+            hashedPassword,
+            Enum.Parse<UserRole>(request.Role, true));
+
+        await _userRepository.AddAsync(user, cancellationToken);
+        return user;
+    }
+
+    private async Task AssignCartToNewUser(User user, CancellationToken cancellationToken)
+    {
+        var guestCartId = _currentUserService.GuestCartId;
+        var guestCart = await _guestCartService.GetCartAsync(guestCartId);
+
+        Cart cart;
+
+        if (guestCart != null)
+            cart = await TransferGuestCart(user, guestCartId, guestCart);
+        else
+            cart = new Cart(user.Id);
+
+        await _cartRepository.AddAsync(cart, cancellationToken);
+    }
+
+    private async Task<Cart> TransferGuestCart(User user, Guid guestCartId, GuestCartDto guestCart)
+    {
+        Cart cart = new Cart(guestCart.Id, user.Id);
+
+        cart.Items.AddRange(guestCart.Items.Adapt<List<CartItem>>());
+
+        await _guestCartService.DeleteCartAsync(guestCartId);
+
+        return cart;
     }
 }

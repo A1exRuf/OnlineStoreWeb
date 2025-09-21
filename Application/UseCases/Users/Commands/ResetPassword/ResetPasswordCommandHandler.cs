@@ -30,33 +30,43 @@ public class ResetPasswordCommandHandler : ICommandHandler<ResetPasswordCommand>
 
     public async Task Handle(ResetPasswordCommand request, CancellationToken cancellationToken)
     {
-        // Check Reset Token
-        var userId = await _userRepository.GetAsync<EntityIdDto>(
-            filter: new UserFilter { Email = request.Email }, 
-            cancellationToken);   
+        Guid userId = await GetUserId(request.Email, cancellationToken);
+        await ValidateAndRemoveResetToken(request, userId, cancellationToken);
+        await ChangePassword(request, userId, cancellationToken);
 
+        await _unitOfWork.SaveChangesAsync();
+    }
+
+    private async Task<Guid> GetUserId(string email, CancellationToken cancellationToken)
+    {
+        return await _userRepository.GetAsync<EntityIdDto>(
+            filter: new UserFilter { Email = email },
+            cancellationToken)
+        ?? throw new UserNotFoundByEmailException(email);
+    }
+
+    private async Task ValidateAndRemoveResetToken(ResetPasswordCommand request, Guid userId, CancellationToken cancellationToken)
+    {
         var resetToken = await _resetTokenRepository.GetAsync(
-            filter: new ResetTokenFilter { UserId = userId!, Token = request.ResetToken },
+            filter: new ResetTokenFilter { UserId = userId, Token = request.ResetToken },
             cancellationToken);
 
-        if (resetToken == null || resetToken.ExpiresOnUtc < DateTime.UtcNow || resetToken.UserId != userId!)
+        if (resetToken == null || resetToken.ExpiresOnUtc < DateTime.UtcNow)
             throw new InvalidResetTokenException();
 
-        // Change password
-        var user = await _userRepository.GetAsync(
-            filter: new UserFilter { Id = userId! },
+        await _resetTokenRepository.RemoveAsync(
+            filter: new ResetTokenFilter { UserId = userId },
             cancellationToken);
+    }
 
-        if (user == null)
-            throw new NotFoundByIdException<User>(userId!);
+    private async Task ChangePassword(ResetPasswordCommand request, Guid userId, CancellationToken cancellationToken)
+    {
+        var user = await _userRepository.GetAsync(
+            filter: new UserFilter { Id = userId },
+            cancellationToken)
+        ?? throw new NotFoundByIdException<User>(userId);
 
         user.PasswordHash = _passwordHasher.HashPassword(request.Password);
         _userRepository.Update(user);
-
-        await _resetTokenRepository.RemoveAsync(
-            filter: new ResetTokenFilter { UserId = user.Id},
-            cancellationToken);
-
-        await _unitOfWork.SaveChangesAsync();
     }
 }

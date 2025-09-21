@@ -30,31 +30,37 @@ public class DeleteCartItemCommandHandler : ICommandHandler<DeleteCartItemComman
     {
         var userId = _currentUserService.UserId;
 
-        if (userId.HasValue) // For customers
-        {
-            int removed = await _cartItemRepository.RemoveAsync(
-                filter: new CartItemFilter { Id = request.Id },
-                cancellationToken);
+        if (userId.HasValue)
+            await DeleteItemFromCustomerCart(request, cancellationToken);
+        else
+            await DeleteItemFromGuestCart(request);
+    }
 
-            if (removed != 1)
-                throw new NotFoundByIdException<CartItem>(request.Id);
+    private async Task DeleteItemFromGuestCart(DeleteCartItemCommand request)
+    {
+        var cartId = _currentUserService.GuestCartId;
 
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
-        }
-        else // For guest
-        {
-            var cartId = _currentUserService.GuestCartId;
+        var cart = await _guestCartService.GetCartAsync(cartId)
+            ?? throw new NotFoundByIdException<Cart>(cartId);
 
-            var cart = await _guestCartService.GetCartAsync(cartId)
-                ?? throw new NotFoundByIdException<Cart>(cartId);
+        var updatedItems = cart.Items
+            .Where(x => x.Id != request.Id)
+            .ToList();
 
-            var updatedItems = cart.Items
-                .Where(x => x.Id != request.Id)
-                .ToList();
+        cart = cart with { Items = updatedItems };
 
-            cart = cart with { Items = updatedItems };
+        await _guestCartService.SaveCartAsync(cart);
+    }
 
-            await _guestCartService.SaveCartAsync(cart);
-        }
+    private async Task DeleteItemFromCustomerCart(DeleteCartItemCommand request, CancellationToken cancellationToken)
+    {
+        int removed = await _cartItemRepository.RemoveAsync(
+            filter: new CartItemFilter { Id = request.Id },
+            cancellationToken);
+
+        if (removed != 1)
+            throw new NotFoundByIdException<CartItem>(request.Id);
+
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
     }
 }
