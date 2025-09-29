@@ -1,100 +1,21 @@
-﻿using Application.Abstractions;
+﻿using Application.Abstractions.Carts;
 using Application.Abstractions.Messaging;
-using Application.Exceptions;
-using Application.Filters;
-using Domain.Abstractions;
-using Domain.Entities;
-using Domain.Exceptions;
 
 namespace Application.UseCases.Carts.Commands.ChangeQuantity;
 
 public class ChangeCartItemQuantityCommandHandler : ICommandHandler<ChangeCartItemQuantityCommand>
 {
-    private readonly IRepository<CartItem> _cartItemRepository;
-    private readonly IRepository<Product> _productRepository;
-    private readonly IUnitOfWork _unitOfWork;
-    private readonly ICurrentUserService _currentUserService;
-    private readonly IGuestCartService _guestCartService;
+    private readonly ICartServiceFactory _cartServiceFactory;
 
-    public ChangeCartItemQuantityCommandHandler(
-        IRepository<CartItem> cartItemRepository, 
-        IRepository<Product> productRepository, 
-        IUnitOfWork unitOfWork, 
-        ICurrentUserService currentUserService, 
-        IGuestCartService guestCartService)
+    public ChangeCartItemQuantityCommandHandler(ICartServiceFactory cartServiceFactory)
     {
-        _cartItemRepository = cartItemRepository;
-        _productRepository = productRepository;
-        _unitOfWork = unitOfWork;
-        _currentUserService = currentUserService;
-        _guestCartService = guestCartService;
+        _cartServiceFactory = cartServiceFactory;
     }
 
     public async Task Handle(ChangeCartItemQuantityCommand request, CancellationToken cancellationToken)
     {
-        var userId = _currentUserService.UserId;
+        var cartService = _cartServiceFactory.Create();
 
-        if (userId.HasValue)
-            await ChangeItemQuantityForCustomer(request, cancellationToken);
-        else
-            await ChangeItemQuantityForGuest(request, cancellationToken);
-    }
-
-    private async Task ChangeItemQuantityForGuest(ChangeCartItemQuantityCommand request, CancellationToken cancellationToken)
-    {
-        var cartId = _currentUserService.GuestCartId;
-
-        var cart = await _guestCartService.GetCartAsync(cartId)
-            ?? throw new NotFoundByIdException<Cart>(cartId);
-
-        var cartItem = cart.Items.Where(x => x.Id == request.Id).FirstOrDefault()
-            ?? throw new NotFoundByIdException<CartItem>(request.Id);
-
-        await CheckIfEnoughProductsInStock(
-            request.Quantity,
-            cartItem.ProductId,
-            cancellationToken);
-
-        var updatedItems = cart.Items
-            .Select(x => x.Id == request.Id ? x with { Quantity = request.Quantity } : x)
-            .ToList();
-
-        cart = cart with { Items = updatedItems };
-
-        await _guestCartService.SaveCartAsync(cart);
-    }
-
-    private async Task ChangeItemQuantityForCustomer(ChangeCartItemQuantityCommand request, CancellationToken cancellationToken)
-    {
-        var cartItem = await _cartItemRepository.GetAsync(
-            filter: new CartItemFilter { Id = request.Id },
-            cancellationToken: cancellationToken);
-
-        if (cartItem == null)
-            throw new NotFoundByIdException<CartItem>(request.Id);
-
-        await CheckIfEnoughProductsInStock(
-            request.Quantity,
-            cartItem.ProductId,
-            cancellationToken);
-
-        cartItem!.Quantity = request.Quantity;
-
-        _cartItemRepository.Update(cartItem);
-
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
-    }
-
-    private async Task CheckIfEnoughProductsInStock(
-        int quantity, 
-        Guid productId, 
-        CancellationToken cancellationToken)
-    {
-        bool inStock = await _productRepository.ExistsAsync(
-            filter: new ProductFilter { Id = productId, StockQuantity = quantity },
-            cancellationToken);
-
-        if (!inStock)
-            throw new NotEnoughProductInStockException("product");
+        await cartService.ChangeItemQuantityAsync(request, cancellationToken);
     }
 }

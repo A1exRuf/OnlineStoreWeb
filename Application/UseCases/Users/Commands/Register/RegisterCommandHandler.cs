@@ -1,4 +1,5 @@
 ﻿using Application.Abstractions;
+using Application.Abstractions.Carts;
 using Application.Abstractions.Messaging;
 using Application.Dtos.Cart;
 using Domain.Abstractions;
@@ -14,7 +15,7 @@ public class RegisterCommandHandler : ICommandHandler<RegisterCommand, Guid>
     private readonly IRepository<Cart> _cartRepository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IPasswordHasher _passwordHasher;
-    private readonly IGuestCartService _guestCartService;
+    private readonly IGuestCartStorage _guestCartService;
     private readonly ICurrentUserService _currentUserService;
 
     public RegisterCommandHandler(
@@ -22,7 +23,7 @@ public class RegisterCommandHandler : ICommandHandler<RegisterCommand, Guid>
         IRepository<Cart> cartRepository, 
         IUnitOfWork unitOfWork, 
         IPasswordHasher passwordHasher,
-        IGuestCartService guestCartService,
+        IGuestCartStorage guestCartService,
         ICurrentUserService currentUserService)
     {
         _userRepository = userRepository;
@@ -60,7 +61,7 @@ public class RegisterCommandHandler : ICommandHandler<RegisterCommand, Guid>
     private async Task AssignCartToNewUser(User user, CancellationToken cancellationToken)
     {
         var guestCartId = _currentUserService.GuestCartId;
-        var guestCart = await _guestCartService.GetCartAsync(guestCartId);
+        var guestCart = await _guestCartService.GetCartAsync();
 
         Cart cart;
 
@@ -78,7 +79,7 @@ public class RegisterCommandHandler : ICommandHandler<RegisterCommand, Guid>
 
         cart.Items.AddRange(guestCart.Items.Adapt<List<CartItem>>());
 
-        await _guestCartService.DeleteCartAsync(guestCartId);
+        await _guestCartService.DeleteCartAsync();
 
         return cart;
     }

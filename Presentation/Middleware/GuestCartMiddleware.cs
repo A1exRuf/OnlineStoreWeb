@@ -1,4 +1,4 @@
-﻿using Application.Abstractions;
+﻿using Application.Abstractions.Carts;
 using Application.Dtos.Cart;
 using Microsoft.AspNetCore.Http;
 
@@ -6,9 +6,9 @@ namespace Presentation.Middleware;
 
 public class GuestCartMiddleware : IMiddleware
 {
-    private readonly IGuestCartService _guestCartService;
+    private readonly IGuestCartStorage _guestCartService;
 
-    public GuestCartMiddleware(IGuestCartService guestCartService)
+    public GuestCartMiddleware(IGuestCartStorage guestCartService)
     {
         _guestCartService = guestCartService;
     }
@@ -24,10 +24,10 @@ public class GuestCartMiddleware : IMiddleware
             {
                 CreateGuestCartIdCookie(context, cookieName, cartIdstr);
 
-                var cart = await _guestCartService.GetCartAsync(cartId);
+                var cart = await _guestCartService.GetCartAsync();
                 if (cart != null)
                 {
-                    await _guestCartService.TouchAsync(cartId);
+                    await _guestCartService.TouchAsync();
                 }
                 else
                 {

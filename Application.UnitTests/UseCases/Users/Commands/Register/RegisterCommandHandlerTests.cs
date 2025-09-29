@@ -1,4 +1,5 @@
 ﻿using Application.Abstractions;
+using Application.Abstractions.Carts;
 using Application.Dtos.Cart;
 using Application.Dtos.CartItem;
 using Application.UseCases.Users.Commands.Register;
@@ -15,7 +16,7 @@ public class RegisterCommandHandlerTests
     private readonly Mock<IRepository<Cart>> _cartRepositoryMock;
     private readonly Mock<IUnitOfWork> _unitOfWorkMock;
     private readonly Mock<IPasswordHasher> _passwordHasherMock;
-    private readonly Mock<IGuestCartService> _guestCartServiceMock;
+    private readonly Mock<IGuestCartStorage> _guestCartServiceMock;
     private readonly Mock<ICurrentUserService> _currentUserServiceMock;
     private readonly RegisterCommandHandler _handler;
 
@@ -25,7 +26,7 @@ public class RegisterCommandHandlerTests
         _cartRepositoryMock = new Mock<IRepository<Cart>>();
         _unitOfWorkMock = new Mock<IUnitOfWork>();
         _passwordHasherMock = new Mock<IPasswordHasher>();
-        _guestCartServiceMock = new Mock<IGuestCartService>();
+        _guestCartServiceMock = new Mock<IGuestCartStorage>();
         _currentUserServiceMock = new Mock<ICurrentUserService>();
 
         _handler = new RegisterCommandHandler(

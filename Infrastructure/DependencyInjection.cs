@@ -1,4 +1,5 @@
 ﻿using Application.Abstractions;
+using Application.Abstractions.Carts;
 using Azure.Storage.Blobs;
 using Domain.Abstractions;
 using Infrastructure.Services;
@@ -41,7 +42,7 @@ public static class DependencyInjection
         services.AddScoped<IPasswordHasher, PasswordHasher>();
         services.AddScoped<ITokenProvider, TokenProvider>();
         services.AddScoped<ICurrentUserService, CurrentUserService>();
-        services.AddScoped<IGuestCartService, GuestCartService>();
+        services.AddScoped<IGuestCartStorage, GuestCartStorage>();
         services.AddScoped<ISearchFactory, SearchFactory>();
         services.AddScoped<IEmailService, EmailService>();
 

@@ -1,4 +1,6 @@
-﻿namespace Domain.Entities;
+﻿using Domain.Exceptions;
+
+namespace Domain.Entities;
 
 public class CartItem : Entity
 {
