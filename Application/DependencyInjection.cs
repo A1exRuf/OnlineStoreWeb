@@ -1,6 +1,10 @@
 ﻿using Application.Abstractions;
+using Application.Abstractions.Carts;
+using Application.Abstractions.Users.CartInitialization;
 using Application.Behaviors;
-using Application.Services;
+using Application.Services.Carts;
+using Application.Services.Categories;
+using Application.Services.Users.CartInitialization;
 using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,6 +22,15 @@ namespace Application
             services.AddValidatorsFromAssembly(AssemblyReference.Assembly);
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
             services.AddScoped<ICategoryTreeBuilder, CategoryTreeBuilder>();
+
+            services.AddScoped<ICartServiceFactory, CartServiceFactory>();
+            services.AddScoped<CustomerCartService>();
+            services.AddScoped<GuestCartService>();
+
+            services.AddScoped<ICartInitializationStrategyFactory, CartInitializationStrategyFactory>();
+            services.AddScoped<NewCartInitializationStrategy>();
+            services.AddScoped<TransferGuestCartInitializationStrategy>();
+            
 
             return services;
         }

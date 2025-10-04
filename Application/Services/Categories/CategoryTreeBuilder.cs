@@ -1,12 +1,12 @@
 ﻿using Application.Abstractions;
 using Application.Dtos.Category;
 
-namespace Application.Services;
+namespace Application.Services.Categories;
 
 public class CategoryTreeBuilder : ICategoryTreeBuilder
 {
     public CategoryWithChildrenDto BuildTree(
-        CategoryWithChildrenDto root, 
+        CategoryWithChildrenDto root,
         List<CategoryWithChildrenDto> flatList)
     {
         var lookup = flatList.ToDictionary(x => x.Id);
