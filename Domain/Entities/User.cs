@@ -9,7 +9,7 @@ public class User : Entity
     public UserRole Role { get; set; }
     public DateTime CreatedAt { get; private set; }
     public List<Order> Orders { get; private set; }
-    public Cart Cart { get; private set; }
+    public Cart Cart { get; set; }
 
     public User (string email, string passwordHash, UserRole role)
     {
